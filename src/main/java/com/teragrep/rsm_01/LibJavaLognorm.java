@@ -87,10 +87,10 @@ public interface LibJavaLognorm extends Library {
     public abstract int hasAdvancedStats();
 
     // Loads the rulebase from a file to the context.
-    public abstract void loadSamples(Pointer ctx, String filename);
+    public abstract int loadSamples(Pointer ctx, String filename);
 
     // Loads the rulebase via a string to the context.
-    public abstract void loadSamplesFromString(Pointer ctx, String string);
+    public abstract int loadSamplesFromString(Pointer ctx, String string);
 
     // normalize gets the log string that is being normalized as input argument, along with the library context. Returns pointer to a json object.
     public abstract Pointer normalize(Pointer ctx, String text);

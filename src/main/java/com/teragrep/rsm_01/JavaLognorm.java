@@ -45,14 +45,39 @@
  */
 package com.teragrep.rsm_01;
 
+import com.sun.jna.Pointer;
+
 public class JavaLognorm {
 
     JavaLognorm() {
-
     }
 
     public String liblognormVersionCheck() {
         return LibJavaLognorm.INSTANCE.version();
+    }
+
+    public Pointer liblognormInitCtx() {
+        return LibJavaLognorm.INSTANCE.initCtx();
+    }
+
+    public void liblognormExitCtx(Pointer ctx) {
+        LibJavaLognorm.INSTANCE.exitCtx(ctx);
+    }
+
+    public void liblognormSetCtxOpts(Pointer ctx, LibJavaLognorm.OptionsStruct opts) {
+        LibJavaLognorm.INSTANCE.setCtxOpts(ctx, opts);
+    }
+
+    public int liblognormLoadSamples(Pointer ctx, String samples) {
+        return LibJavaLognorm.INSTANCE.loadSamples(ctx, samples);
+    }
+
+    public int liblognormLoadSamplesFromString(Pointer ctx, String samples) {
+        return LibJavaLognorm.INSTANCE.loadSamplesFromString(ctx, samples);
+    }
+
+    public int liblognormHasAdvancedStats() {
+        return LibJavaLognorm.INSTANCE.hasAdvancedStats();
     }
 
 }

@@ -45,8 +45,13 @@
  */
 package com.teragrep.rsm_01;
 
+import com.sun.jna.Pointer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -57,6 +62,62 @@ class JavaLognormTest {
         JavaLognorm javaLognorm = new JavaLognorm();
         String s = javaLognorm.liblognormVersionCheck();
         Assertions.assertEquals("2.0.6", s);
+    }
+
+    @Test
+    public void ctxTest() {
+        JavaLognorm javaLognorm = new JavaLognorm();
+        Pointer ctx = javaLognorm.liblognormInitCtx();
+        Assertions.assertNotNull(ctx);
+        javaLognorm.liblognormExitCtx(ctx);
+    }
+
+    @Test
+    public void setCtxOptsTest() {
+        JavaLognorm javaLognorm = new JavaLognorm();
+        Pointer ctx = javaLognorm.liblognormInitCtx();
+        Assertions.assertNotNull(ctx);
+        LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
+        opts.CTXOPT_ADD_EXEC_PATH = false;
+        opts.CTXOPT_ADD_ORIGINALMSG = false;
+        opts.CTXOPT_ADD_RULE = false;
+        opts.CTXOPT_ADD_RULE_LOCATION = false;
+        opts.CTXOPT_ALLOW_REGEX = false;
+        javaLognorm.liblognormSetCtxOpts(ctx, opts);
+        Assertions.assertNotNull(ctx);
+        javaLognorm.liblognormExitCtx(ctx);
+    }
+
+    @Test
+    public void loadSamplesTest() {
+        JavaLognorm javaLognorm = new JavaLognorm();
+        Pointer ctx = javaLognorm.liblognormInitCtx();
+        Assertions.assertNotNull(ctx);
+        String samplesPath = "src/test/resources/messages.sampd";
+        int i = javaLognorm.liblognormLoadSamples(ctx, samplesPath);
+        assertEquals(0, i);
+        javaLognorm.liblognormExitCtx(ctx);
+    }
+
+    @Test
+    public void loadSamplesFromStringTest() {
+        assertDoesNotThrow(() -> {
+            JavaLognorm javaLognorm = new JavaLognorm();
+            Pointer ctx = javaLognorm.liblognormInitCtx();
+            Assertions.assertNotNull(ctx);
+            Path path = Paths.get("src/test/resources/messages.sampd");
+            String read = Files.readAllLines(path).get(0);
+            int i = javaLognorm.liblognormLoadSamplesFromString(ctx, read);
+            assertEquals(0, i);
+            javaLognorm.liblognormExitCtx(ctx);
+        });
+    }
+
+    @Test
+    public void hasAdvancedStatsTest() {
+        JavaLognorm javaLognorm = new JavaLognorm();
+        int i = javaLognorm.liblognormHasAdvancedStats();
+        assertEquals(0, i);
     }
 
 }

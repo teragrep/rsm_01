@@ -571,6 +571,8 @@
             <exclude>src/main/c/configure.ac</exclude>
             <exclude>src/main/c/COPYING</exclude>
             <exclude>src/main/c/Makefile.am</exclude>
+            <!-- test resources -->
+            <exclude>src/test/resources/messages.sampd</exclude>
           </excludes>
         </configuration>
         <executions>
