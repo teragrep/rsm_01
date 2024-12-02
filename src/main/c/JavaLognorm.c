@@ -80,20 +80,31 @@ void *initCtx() {
     return ctx;
 }
 
-void *inherittedCtx(ln_ctx parent) {
-    ln_ctx *ctx = malloc(sizeof(ln_ctx));
-    if((*ctx = ln_inherittedCtx(parent)) == NULL) {
-        // add exception handling here. ln_ returns null if error occurred.
-        return NULL;
-    }
-    return ctx;
-}
-
 void exitCtx(ln_ctx *context) {
     if (*context) {
         ln_exitCtx(*context);
     }
     free(context);
+}
+
+void setCtxOpts(ln_ctx *ctx, OptionsStruct *opts) {
+    unsigned ctxOpts = 0;
+    if (opts->CTXOPT_ALLOW_REGEX != 0) {
+        ctxOpts |= LN_CTXOPT_ALLOW_REGEX;
+        }
+    if (opts->CTXOPT_ADD_EXEC_PATH != 0) {
+        ctxOpts |= LN_CTXOPT_ADD_EXEC_PATH;
+        }
+    if (opts->CTXOPT_ADD_ORIGINALMSG != 0) {
+        ctxOpts |= LN_CTXOPT_ADD_ORIGINALMSG;
+        }
+    if (opts->CTXOPT_ADD_RULE != 0) {
+        ctxOpts |= LN_CTXOPT_ADD_RULE;
+        }
+    if (opts->CTXOPT_ADD_RULE_LOCATION != 0) {
+        ctxOpts |= LN_CTXOPT_ADD_RULE_LOCATION;
+        }
+    ln_setCtxOpts(*ctx, ctxOpts);
 }
 
 int loadSamples(ln_ctx *context, char *filename) {
@@ -102,5 +113,9 @@ int loadSamples(ln_ctx *context, char *filename) {
 
 int loadSamplesFromString(ln_ctx *context, char *string) {
     return ln_loadSamplesFromString(*context, string);
+}
+
+int hasAdvancedStats() {
+    return ln_hasAdvancedStats();
 }
 

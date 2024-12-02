@@ -77,9 +77,6 @@ public interface LibJavaLognorm extends Library {
     // init initializes the liblognorm context. deinit() must be called on the produced context when it is not needed anymore.
     public abstract Pointer initCtx();
 
-    // Inherit control attributes from a library context. deinit() must be called on the produced context when it is not needed anymore.
-    public abstract Pointer inherittedCtx(Pointer ctx);
-
     // To prevent memory leaks, deinit() must be called on a library context that is no longer needed.
     public abstract void exitCtx(Pointer ctx);
 
