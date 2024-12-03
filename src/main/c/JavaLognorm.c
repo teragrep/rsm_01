@@ -119,3 +119,22 @@ int hasAdvancedStats() {
     return ln_hasAdvancedStats();
 }
 
+void *normalize(ln_ctx *context, char *line) {
+     ln_ctx ctx = *context;
+     struct json_object *jobj = NULL;
+     int i = ln_normalize(ctx, line, strlen(line), &jobj);
+     if(i != 0) {
+        return NULL;
+     }
+     if(jobj != NULL) {
+        return jobj;
+     }
+}
+
+char *readResult(struct json_object *jref) {
+    return (char*)json_object_to_json_string(jref);
+}
+
+void destroyResult(struct json_object *jref) {
+    json_object_put(jref);
+}

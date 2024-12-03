@@ -49,10 +49,6 @@ import com.sun.jna.Pointer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class JavaLognormTest {
@@ -93,7 +89,7 @@ class JavaLognormTest {
         JavaLognorm javaLognorm = new JavaLognorm();
         Pointer ctx = javaLognorm.liblognormInitCtx();
         Assertions.assertNotNull(ctx);
-        String samplesPath = "src/test/resources/messages.sampd";
+        String samplesPath = "src/test/resources/sample.rulebase";
         int i = javaLognorm.liblognormLoadSamples(ctx, samplesPath);
         assertEquals(0, i);
         javaLognorm.liblognormExitCtx(ctx);
@@ -105,9 +101,7 @@ class JavaLognormTest {
             JavaLognorm javaLognorm = new JavaLognorm();
             Pointer ctx = javaLognorm.liblognormInitCtx();
             Assertions.assertNotNull(ctx);
-            Path path = Paths.get("src/test/resources/messages.sampd");
-            String read = Files.readAllLines(path).get(0);
-            int i = javaLognorm.liblognormLoadSamplesFromString(ctx, read);
+            int i = javaLognorm.liblognormLoadSamplesFromString(ctx, "rule=:%all:rest%");
             assertEquals(0, i);
             javaLognorm.liblognormExitCtx(ctx);
         });
@@ -118,6 +112,65 @@ class JavaLognormTest {
         JavaLognorm javaLognorm = new JavaLognorm();
         int i = javaLognorm.liblognormHasAdvancedStats();
         assertEquals(0, i);
+    }
+
+    @Test
+    public void normalizeTest() {
+        JavaLognorm javaLognorm = new JavaLognorm();
+        Pointer ctx = javaLognorm.liblognormInitCtx();
+        Assertions.assertNotNull(ctx);
+        LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
+        opts.CTXOPT_ADD_EXEC_PATH = false;
+        opts.CTXOPT_ADD_ORIGINALMSG = false;
+        opts.CTXOPT_ADD_RULE = false;
+        opts.CTXOPT_ADD_RULE_LOCATION = false;
+        opts.CTXOPT_ALLOW_REGEX = false;
+        javaLognorm.liblognormSetCtxOpts(ctx, opts);
+        Assertions.assertNotNull(ctx);
+        String samplesString = "rule=:%all:rest%";
+
+        int i = javaLognorm.liblognormLoadSamplesFromString(ctx, samplesString);
+        assertEquals(0, i); // 0 means successful normalization, anything else means an error happened.
+        Pointer jref = javaLognorm.liblognormNormalize(ctx, "offline");
+
+        // cleanup
+        javaLognorm.liblognormDestroyResult(jref);
+        javaLognorm.liblognormExitCtx(ctx);
+    }
+
+    @Test
+    public void readResultTest() {
+        JavaLognorm javaLognorm = new JavaLognorm();
+        Pointer ctx = javaLognorm.liblognormInitCtx();
+        Assertions.assertNotNull(ctx);
+        String samplesString = "rule=:%all:rest%";
+        int i = javaLognorm.liblognormLoadSamplesFromString(ctx, samplesString);
+        assertEquals(0, i);
+        Pointer jref = javaLognorm.liblognormNormalize(ctx, "offline");
+
+        String s = javaLognorm.liblognormReadResult(ctx, jref);
+        Assertions.assertEquals("{ \"all\": \"offline\" }", s);
+
+        // cleanup
+        javaLognorm.liblognormDestroyResult(jref);
+        javaLognorm.liblognormExitCtx(ctx);
+    }
+
+    @Test
+    public void destroyResultTest() {
+        JavaLognorm javaLognorm = new JavaLognorm();
+        Pointer ctx = javaLognorm.liblognormInitCtx();
+        Assertions.assertNotNull(ctx);
+        String samplesString = "rule=:%all:rest%";
+        int i = javaLognorm.liblognormLoadSamplesFromString(ctx, samplesString);
+        assertEquals(0, i);
+        Pointer jref = javaLognorm.liblognormNormalize(ctx, "offline");
+
+        javaLognorm.liblognormDestroyResult(jref);
+        Assertions.assertNotNull(jref);
+
+        // cleanup
+        javaLognorm.liblognormExitCtx(ctx);
     }
 
 }
