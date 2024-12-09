@@ -1,0 +1,4 @@
+This is a package for rsm-01 library.
+Type 'info Automake' to read the Automake manual.
+This package requires liblognorm-library to be installed:
+sudo dnf install liblognorm-devel
