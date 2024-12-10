@@ -67,6 +67,16 @@ typedef struct OptionsStruct_TAG {
     int CTXOPT_ADD_RULE_LOCATION;
 }OptionsStruct;
 
+static void errCallBack(void __attribute__((unused)) *cookie, const char *msg, size_t __attribute__((unused)) lenMsg) {
+    printf("liblognorm error: %s\n", msg);
+}
+
+static void dbgCallBack(void __attribute__((unused)) *cookie, const char *msg,
+	    size_t __attribute__((unused)) lenMsg)
+{
+	printf("liblognorm: %s\n", msg);
+}
+
 const char *version() {
     return ln_version();
 }
@@ -139,6 +149,14 @@ void destroyResult(struct json_object *jref) {
     json_object_put(jref);
 }
 
-void enableDebug(ln_ctx ctx, int i) {
-    ln_enableDebug(ctx, i);
+void enableDebug(ln_ctx *ctx, int i) {
+    ln_enableDebug(*ctx, i);
+}
+
+int setDebugCB(ln_ctx *ctx) {
+    return ln_setDebugCB(*ctx, dbgCallBack, NULL);
+};
+
+int setErrMsgCB(ln_ctx *ctx) {
+    return ln_setErrMsgCB(*ctx, errCallBack, NULL);
 }

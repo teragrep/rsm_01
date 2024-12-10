@@ -178,7 +178,38 @@ class JavaLognormTest {
         JavaLognorm javaLognorm = new JavaLognorm();
         Pointer ctx = javaLognorm.liblognormInitCtx();
         Assertions.assertNotNull(ctx);
-        javaLognorm.liblognormEnableDebug(ctx, 1);
+
+        assertDoesNotThrow(() -> {
+            javaLognorm.liblognormEnableDebug(ctx, 1);
+        });
+
+        // cleanup
+        javaLognorm.liblognormExitCtx(ctx);
+    }
+
+    @Test
+    public void setDebugCBTest() {
+        JavaLognorm javaLognorm = new JavaLognorm();
+        Pointer ctx = javaLognorm.liblognormInitCtx();
+        Assertions.assertNotNull(ctx);
+
+        int a = javaLognorm.liblognormSetDebugCB(ctx);
+        Assertions.assertEquals(0, a);
+
+        // cleanup
+        javaLognorm.liblognormExitCtx(ctx);
+    }
+
+    @Test
+    public void setErrMsgCBTest() {
+        JavaLognorm javaLognorm = new JavaLognorm();
+        Pointer ctx = javaLognorm.liblognormInitCtx();
+        Assertions.assertNotNull(ctx);
+
+        int a = javaLognorm.liblognormSetErrMsgCB(ctx);
+        Assertions.assertEquals(0, a);
+
+        // cleanup
         javaLognorm.liblognormExitCtx(ctx);
     }
 

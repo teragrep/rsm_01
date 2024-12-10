@@ -115,4 +115,12 @@ public class JavaLognorm {
         LibJavaLognorm.INSTANCE.enableDebug(ctx, i);
     }
 
+    public int liblognormSetDebugCB(Pointer ctx) {
+        return LibJavaLognorm.INSTANCE.setDebugCB(ctx);
+    }
+
+    public int liblognormSetErrMsgCB(Pointer ctx) {
+        return LibJavaLognorm.INSTANCE.setErrMsgCB(ctx);
+    }
+
 }
