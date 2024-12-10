@@ -138,3 +138,7 @@ char *readResult(struct json_object *jref) {
 void destroyResult(struct json_object *jref) {
     json_object_put(jref);
 }
+
+void enableDebug(ln_ctx ctx, int i) {
+    ln_enableDebug(ctx, i);
+}

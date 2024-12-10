@@ -111,4 +111,8 @@ public class JavaLognorm {
         LibJavaLognorm.INSTANCE.destroyResult(jref);
     }
 
+    public void liblognormEnableDebug(Pointer ctx, int i) {
+        LibJavaLognorm.INSTANCE.enableDebug(ctx, i);
+    }
+
 }

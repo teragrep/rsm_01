@@ -173,4 +173,13 @@ class JavaLognormTest {
         javaLognorm.liblognormExitCtx(ctx);
     }
 
+    @Test
+    public void enableDebugTest() {
+        JavaLognorm javaLognorm = new JavaLognorm();
+        Pointer ctx = javaLognorm.liblognormInitCtx();
+        Assertions.assertNotNull(ctx);
+        javaLognorm.liblognormEnableDebug(ctx, 1);
+        javaLognorm.liblognormExitCtx(ctx);
+    }
+
 }
