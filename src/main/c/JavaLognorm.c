@@ -48,17 +48,6 @@
 #include <liblognorm/liblognorm.h>
 #include <liblognorm/lognorm.h>
 
-/* compiler commands for this file, may need additional compiler flags for liblognorm like pcre2 did:
- gcc -c -Wall -Werror -fpic src/main/c/JavaLognorm.c -o src/main/c/JavaLognorm.o -I/usr/include/liblognorm -I/usr/include/json-c
- gcc -shared -Wl,-soname,JavaLognorm.so -o src/main/c/JavaLognorm.so src/main/c/JavaLognorm.o
-
- Autotools setup commands for this file:
- autoreconf --install
- ./configure
- make
-
- None of the above matters if maven works as intended and executes the autotools scripts automatically.*/
-
 typedef struct OptionsStruct_TAG {
     int CTXOPT_ALLOW_REGEX;
     int CTXOPT_ADD_EXEC_PATH;
@@ -67,11 +56,13 @@ typedef struct OptionsStruct_TAG {
     int CTXOPT_ADD_RULE_LOCATION;
 }OptionsStruct;
 
-static void errCallBack(void __attribute__((unused)) *cookie, const char *msg, size_t __attribute__((unused)) lenMsg) {
+void errCallBack(void __attribute__((unused)) *cookie, const char *msg, size_t __attribute__((unused)) lenMsg) {
     printf("liblognorm error: %s\n", msg);
 }
 
-static void dbgCallBack(void __attribute__((unused)) *cookie, const char *msg,
+typedef void(*DebugCallback)(void __attribute__((unused)) *cookie, const char *msg, size_t __attribute__((unused)) lenMsg);
+
+void dbgCallBack(void __attribute__((unused)) *cookie, const char *msg,
 	    size_t __attribute__((unused)) lenMsg)
 {
 	printf("liblognorm: %s\n", msg);
@@ -153,8 +144,8 @@ void enableDebug(ln_ctx *ctx, int i) {
     ln_enableDebug(*ctx, i);
 }
 
-int setDebugCB(ln_ctx *ctx) {
-    return ln_setDebugCB(*ctx, dbgCallBack, NULL);
+int setDebugCB(ln_ctx *ctx, const DebugCallback debugCallback) {
+    return ln_setDebugCB(*ctx, debugCallback, NULL);
 };
 
 int setErrMsgCB(ln_ctx *ctx) {

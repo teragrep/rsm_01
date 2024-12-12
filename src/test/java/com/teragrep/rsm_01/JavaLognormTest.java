@@ -195,6 +195,9 @@ class JavaLognormTest {
 
         int a = javaLognorm.liblognormSetDebugCB(ctx);
         Assertions.assertEquals(0, a);
+        javaLognorm.liblognormEnableDebug(ctx, 1);
+
+        // Assert debug log messages here. Logs can include memory information so they are not identical in each run.
 
         // cleanup
         javaLognorm.liblognormExitCtx(ctx);

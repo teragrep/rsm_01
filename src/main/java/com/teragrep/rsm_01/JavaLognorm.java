@@ -46,8 +46,12 @@
 package com.teragrep.rsm_01;
 
 import com.sun.jna.Pointer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JavaLognorm {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JavaLognorm.class);
 
     JavaLognorm() {
     }
@@ -116,7 +120,8 @@ public class JavaLognorm {
     }
 
     public int liblognormSetDebugCB(Pointer ctx) {
-        return LibJavaLognorm.INSTANCE.setDebugCB(ctx);
+        LibJavaLognorm.DebugCallback.DebugCallbackImpl callbackImpl = new LibJavaLognorm.DebugCallback.DebugCallbackImpl();
+        return LibJavaLognorm.INSTANCE.setDebugCB(ctx, callbackImpl);
     }
 
     public int liblognormSetErrMsgCB(Pointer ctx) {
