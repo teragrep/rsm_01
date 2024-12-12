@@ -64,7 +64,22 @@ public interface LibJavaLognorm extends Library {
 
             @Override
             public void invoke(Pointer cookie, String msg, int length) {
-                LOGGER.debug("liblognorm: " + msg);
+                LOGGER.debug("liblognorm: {}", msg);
+            }
+        }
+    }
+
+    public interface ErrorCallback extends Callback {
+
+        void invoke(Pointer cookie, String msg, int length);
+
+        public static class ErrorCallbackImpl implements ErrorCallback {
+
+            private static final Logger LOGGER = LoggerFactory.getLogger(ErrorCallbackImpl.class);
+
+            @Override
+            public void invoke(Pointer cookie, String msg, int length) {
+                LOGGER.error("liblognorm error: {}", msg);
             }
         }
     }
@@ -123,5 +138,5 @@ public interface LibJavaLognorm extends Library {
     public abstract int setDebugCB(Pointer ctx, DebugCallback func);
 
     // Set a callback for error logging
-    public abstract int setErrMsgCB(Pointer ctx);
+    public abstract int setErrMsgCB(Pointer ctx, ErrorCallback func);
 }

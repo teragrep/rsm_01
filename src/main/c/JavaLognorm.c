@@ -56,17 +56,9 @@ typedef struct OptionsStruct_TAG {
     int CTXOPT_ADD_RULE_LOCATION;
 }OptionsStruct;
 
-void errCallBack(void __attribute__((unused)) *cookie, const char *msg, size_t __attribute__((unused)) lenMsg) {
-    printf("liblognorm error: %s\n", msg);
-}
+typedef void(*ErrorCallback)(void __attribute__((unused)) *cookie, const char *msg, size_t __attribute__((unused)) lenMsg);
 
 typedef void(*DebugCallback)(void __attribute__((unused)) *cookie, const char *msg, size_t __attribute__((unused)) lenMsg);
-
-void dbgCallBack(void __attribute__((unused)) *cookie, const char *msg,
-	    size_t __attribute__((unused)) lenMsg)
-{
-	printf("liblognorm: %s\n", msg);
-}
 
 const char *version() {
     return ln_version();
@@ -148,6 +140,6 @@ int setDebugCB(ln_ctx *ctx, const DebugCallback debugCallback) {
     return ln_setDebugCB(*ctx, debugCallback, NULL);
 };
 
-int setErrMsgCB(ln_ctx *ctx) {
-    return ln_setErrMsgCB(*ctx, errCallBack, NULL);
+int setErrMsgCB(ln_ctx *ctx, const ErrorCallback errorCallback) {
+    return ln_setErrMsgCB(*ctx, errorCallback, NULL);
 }

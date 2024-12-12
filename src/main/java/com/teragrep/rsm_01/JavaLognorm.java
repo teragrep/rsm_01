@@ -125,7 +125,8 @@ public class JavaLognorm {
     }
 
     public int liblognormSetErrMsgCB(Pointer ctx) {
-        return LibJavaLognorm.INSTANCE.setErrMsgCB(ctx);
+        LibJavaLognorm.ErrorCallback.ErrorCallbackImpl callbackImpl = new LibJavaLognorm.ErrorCallback.ErrorCallbackImpl();
+        return LibJavaLognorm.INSTANCE.setErrMsgCB(ctx, callbackImpl);
     }
 
 }
