@@ -54,9 +54,9 @@ public interface LibJavaLognorm extends Library {
 
     public static final LibJavaLognorm INSTANCE = Native.load("JavaLognorm", LibJavaLognorm.class);
 
-    public interface DebugCallback extends Callback {
+    public static interface DebugCallback extends Callback {
 
-        void invoke(Pointer cookie, String msg, int length);
+        public abstract void invoke(Pointer cookie, String msg, int length);
 
         public static class DebugCallbackImpl implements DebugCallback {
 
@@ -69,9 +69,9 @@ public interface LibJavaLognorm extends Library {
         }
     }
 
-    public interface ErrorCallback extends Callback {
+    public static interface ErrorCallback extends Callback {
 
-        void invoke(Pointer cookie, String msg, int length);
+        public abstract void invoke(Pointer cookie, String msg, int length);
 
         public static class ErrorCallbackImpl implements ErrorCallback {
 
