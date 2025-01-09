@@ -53,7 +53,7 @@ public final class JavaLognorm {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JavaLognorm.class);
 
-    JavaLognorm() {
+    public JavaLognorm() {
     }
 
     public String liblognormVersionCheck() {
