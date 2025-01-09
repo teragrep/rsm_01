@@ -218,4 +218,13 @@ class JavaLognormTest {
         javaLognorm.liblognormExitCtx(ctx);
     }
 
+    @Test
+    public void exitCtxTest() {
+        JavaLognorm javaLognorm = new JavaLognorm();
+        Pointer ctx = javaLognorm.liblognormInitCtx();
+        Assertions.assertNotNull(ctx);
+        int i = javaLognorm.liblognormExitCtx(ctx); // Returns zero on success, something else otherwise.
+        Assertions.assertEquals(0, i);
+    }
+
 }

@@ -108,7 +108,7 @@ public interface LibJavaLognorm extends Library {
     public abstract Pointer initCtx();
 
     // To prevent memory leaks, deinit() must be called on a library context that is no longer needed.
-    public abstract void exitCtx(Pointer ctx);
+    public abstract int exitCtx(Pointer ctx);
 
     // Set options on ctx.
     public abstract void setCtxOpts(Pointer ctx, OptionsStruct opts);

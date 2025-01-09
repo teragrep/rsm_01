@@ -64,8 +64,8 @@ public final class JavaLognorm {
         return LibJavaLognorm.jnaInstance.initCtx();
     }
 
-    public void liblognormExitCtx(Pointer ctx) {
-        LibJavaLognorm.jnaInstance.exitCtx(ctx);
+    public int liblognormExitCtx(Pointer ctx) {
+        return LibJavaLognorm.jnaInstance.exitCtx(ctx);
     }
 
     public void liblognormSetCtxOpts(Pointer ctx, LibJavaLognorm.OptionsStruct opts) {

@@ -73,11 +73,13 @@ void *initCtx() {
     return ctx;
 }
 
-void exitCtx(ln_ctx *context) {
+int exitCtx(ln_ctx *context) {
+    int rv = -1;
     if (*context) {
-        ln_exitCtx(*context);
+        rv = ln_exitCtx(*context);
     }
     free(context);
+    return rv;
 }
 
 void setCtxOpts(ln_ctx *ctx, OptionsStruct *opts) {
