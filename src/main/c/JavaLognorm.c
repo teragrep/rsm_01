@@ -67,7 +67,7 @@ const char *version() {
 void *initCtx() {
     ln_ctx *ctx = malloc(sizeof(ln_ctx));
     if((*ctx = ln_initCtx()) == NULL) {
-        // add exception handling here. ln_ returns null if error occurred.
+        // TODO: add exception handling in java. ln_ returns null if error occurred.
         return NULL;
     }
     return ctx;
