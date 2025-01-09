@@ -93,7 +93,7 @@ public final class JavaLognorm {
             return jref;
         }
         else {
-            throw new IllegalArgumentException("LogNorm() not initialized.");
+            throw new IllegalArgumentException("LogNorm() not initialized. Use liblognormInitCtx() to initialize the ctx.");
         }
     }
 
@@ -107,7 +107,7 @@ public final class JavaLognorm {
             return javaString;
         }
         else {
-            throw new IllegalArgumentException("LogNorm() not initialized.");
+            throw new IllegalArgumentException("LogNorm() not initialized. Use liblognormInitCtx() to initialize the ctx.");
         }
     }
 
