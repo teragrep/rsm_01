@@ -57,36 +57,36 @@ public final class JavaLognorm {
     }
 
     public String liblognormVersionCheck() {
-        return LibJavaLognorm.INSTANCE.version();
+        return LibJavaLognorm.jnaInstance.version();
     }
 
     public Pointer liblognormInitCtx() {
-        return LibJavaLognorm.INSTANCE.initCtx();
+        return LibJavaLognorm.jnaInstance.initCtx();
     }
 
     public void liblognormExitCtx(Pointer ctx) {
-        LibJavaLognorm.INSTANCE.exitCtx(ctx);
+        LibJavaLognorm.jnaInstance.exitCtx(ctx);
     }
 
     public void liblognormSetCtxOpts(Pointer ctx, LibJavaLognorm.OptionsStruct opts) {
-        LibJavaLognorm.INSTANCE.setCtxOpts(ctx, opts);
+        LibJavaLognorm.jnaInstance.setCtxOpts(ctx, opts);
     }
 
     public int liblognormLoadSamples(Pointer ctx, String samples) {
-        return LibJavaLognorm.INSTANCE.loadSamples(ctx, samples);
+        return LibJavaLognorm.jnaInstance.loadSamples(ctx, samples);
     }
 
     public int liblognormLoadSamplesFromString(Pointer ctx, String samples) {
-        return LibJavaLognorm.INSTANCE.loadSamplesFromString(ctx, samples);
+        return LibJavaLognorm.jnaInstance.loadSamplesFromString(ctx, samples);
     }
 
     public int liblognormHasAdvancedStats() {
-        return LibJavaLognorm.INSTANCE.hasAdvancedStats();
+        return LibJavaLognorm.jnaInstance.hasAdvancedStats();
     }
 
     public Pointer liblognormNormalize(Pointer ctx, String text) {
         if (ctx != Pointer.NULL) {
-            Pointer jref = LibJavaLognorm.INSTANCE.normalize(ctx, text);
+            Pointer jref = LibJavaLognorm.jnaInstance.normalize(ctx, text);
             if (jref == Pointer.NULL) {
                 throw new NullPointerException("LogNorm() failed to perform extraction.");
             }
@@ -102,7 +102,7 @@ public final class JavaLognorm {
             if (jref == Pointer.NULL) {
                 throw new NullPointerException("LogNorm() failed to perform extraction.");
             }
-            String cstring = LibJavaLognorm.INSTANCE.readResult(jref);
+            String cstring = LibJavaLognorm.jnaInstance.readResult(jref);
             String javaString = String.copyValueOf(cstring.toCharArray(), 0, cstring.length());
             return javaString;
         }
@@ -112,21 +112,21 @@ public final class JavaLognorm {
     }
 
     public void liblognormDestroyResult(Pointer jref) {
-        LibJavaLognorm.INSTANCE.destroyResult(jref);
+        LibJavaLognorm.jnaInstance.destroyResult(jref);
     }
 
     public void liblognormEnableDebug(Pointer ctx, int i) {
-        LibJavaLognorm.INSTANCE.enableDebug(ctx, i);
+        LibJavaLognorm.jnaInstance.enableDebug(ctx, i);
     }
 
     public int liblognormSetDebugCB(Pointer ctx) {
         LibJavaLognorm.DebugCallback.DebugCallbackImpl callbackImpl = new LibJavaLognorm.DebugCallback.DebugCallbackImpl();
-        return LibJavaLognorm.INSTANCE.setDebugCB(ctx, callbackImpl);
+        return LibJavaLognorm.jnaInstance.setDebugCB(ctx, callbackImpl);
     }
 
     public int liblognormSetErrMsgCB(Pointer ctx) {
         LibJavaLognorm.ErrorCallback.ErrorCallbackImpl callbackImpl = new LibJavaLognorm.ErrorCallback.ErrorCallbackImpl();
-        return LibJavaLognorm.INSTANCE.setErrMsgCB(ctx, callbackImpl);
+        return LibJavaLognorm.jnaInstance.setErrMsgCB(ctx, callbackImpl);
     }
 
 }

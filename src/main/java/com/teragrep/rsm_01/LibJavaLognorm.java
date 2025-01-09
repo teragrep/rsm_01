@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
 
 public interface LibJavaLognorm extends Library {
 
-    public static final LibJavaLognorm INSTANCE = Native.load("JavaLognorm", LibJavaLognorm.class);
+    public static final LibJavaLognorm jnaInstance = Native.load("JavaLognorm", LibJavaLognorm.class);
 
     public static interface DebugCallback extends Callback {
 
