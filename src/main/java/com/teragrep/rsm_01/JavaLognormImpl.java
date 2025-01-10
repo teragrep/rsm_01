@@ -49,34 +49,44 @@ import com.sun.jna.Pointer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class JavaLognormImpl {
+public final class JavaLognormImpl implements JavaLognorm {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JavaLognormImpl.class);
 
+    private Pointer ctx;
+
     public JavaLognormImpl() {
+        ctx = LibJavaLognorm.jnaInstance.initCtx();
     }
 
     public Pointer liblognormInitCtx() {
         return LibJavaLognorm.jnaInstance.initCtx();
     }
 
-    public int liblognormExitCtx(Pointer ctx) {
-        return LibJavaLognorm.jnaInstance.exitCtx(ctx);
+    public int liblognormExitCtx() {
+        if (ctx != Pointer.NULL) {
+            return LibJavaLognorm.jnaInstance.exitCtx(ctx);
+        }
+        else {
+            throw new IllegalArgumentException(
+                    "LogNorm() not initialized. Use liblognormInitCtx() to initialize the ctx."
+            );
+        }
     }
 
-    public void liblognormSetCtxOpts(Pointer ctx, LibJavaLognorm.OptionsStruct opts) {
+    public void liblognormSetCtxOpts(LibJavaLognorm.OptionsStruct opts) {
         LibJavaLognorm.jnaInstance.setCtxOpts(ctx, opts);
     }
 
-    public int liblognormLoadSamples(Pointer ctx, String samples) {
+    public int liblognormLoadSamples(String samples) {
         return LibJavaLognorm.jnaInstance.loadSamples(ctx, samples);
     }
 
-    public int liblognormLoadSamplesFromString(Pointer ctx, String samples) {
+    public int liblognormLoadSamplesFromString(String samples) {
         return LibJavaLognorm.jnaInstance.loadSamplesFromString(ctx, samples);
     }
 
-    public Pointer liblognormNormalize(Pointer ctx, String text) {
+    public Pointer liblognormNormalize(String text) {
         if (ctx != Pointer.NULL) {
             Pointer jref = LibJavaLognorm.jnaInstance.normalize(ctx, text);
             if (jref == Pointer.NULL) {
@@ -91,7 +101,7 @@ public final class JavaLognormImpl {
         }
     }
 
-    public String liblognormReadResult(Pointer ctx, Pointer jref) {
+    public String liblognormReadResult(Pointer jref) {
         if (ctx != Pointer.NULL) {
             if (jref == Pointer.NULL) {
                 throw new NullPointerException("LogNorm() failed to perform extraction.");
@@ -111,16 +121,16 @@ public final class JavaLognormImpl {
         LibJavaLognorm.jnaInstance.destroyResult(jref);
     }
 
-    public void liblognormEnableDebug(Pointer ctx, int i) {
+    public void liblognormEnableDebug(int i) {
         LibJavaLognorm.jnaInstance.enableDebug(ctx, i);
     }
 
-    public int liblognormSetDebugCB(Pointer ctx) {
+    public int liblognormSetDebugCB() {
         LibJavaLognorm.DebugCallback.DebugCallbackImpl callbackImpl = new LibJavaLognorm.DebugCallback.DebugCallbackImpl();
         return LibJavaLognorm.jnaInstance.setDebugCB(ctx, callbackImpl);
     }
 
-    public int liblognormSetErrMsgCB(Pointer ctx) {
+    public int liblognormSetErrMsgCB() {
         LibJavaLognorm.ErrorCallback.ErrorCallbackImpl callbackImpl = new LibJavaLognorm.ErrorCallback.ErrorCallbackImpl();
         return LibJavaLognorm.jnaInstance.setErrMsgCB(ctx, callbackImpl);
     }
