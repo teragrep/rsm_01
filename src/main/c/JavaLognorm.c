@@ -56,6 +56,11 @@ typedef struct OptionsStruct_TAG {
     int CTXOPT_ADD_RULE_LOCATION;
 }OptionsStruct;
 
+typedef struct NormalizedStruct_TAG {
+    int rv;
+    json_object *jref;
+}NormalizedStruct;
+
 typedef void(*ErrorCallback)(void __attribute__((unused)) *cookie, const char *msg, size_t __attribute__((unused)) lenMsg);
 
 typedef void(*DebugCallback)(void __attribute__((unused)) *cookie, const char *msg, size_t __attribute__((unused)) lenMsg);
@@ -67,6 +72,7 @@ const char *version() {
 void *initCtx() {
     ln_ctx *ctx = malloc(sizeof(ln_ctx));
     if((*ctx = ln_initCtx()) == NULL) {
+        // Exception handling is done in java. ln_initCtx() is designed to return null if error occurred.
         return NULL;
     }
     return ctx;
@@ -113,16 +119,21 @@ int hasAdvancedStats() {
     return ln_hasAdvancedStats();
 }
 
-void *normalize(ln_ctx *context, char *line) {
-     ln_ctx ctx = *context;
-     struct json_object *jobj = NULL;
-     int i = ln_normalize(ctx, line, strlen(line), &jobj);
-     if(i != 0) {
-        return NULL;
-     }
-     if(jobj != NULL) {
-        return jobj;
-     }
+NormalizedStruct* normalize(ln_ctx *context, char *line, NormalizedStruct* norm) {
+    ln_ctx ctx = *context;
+    struct json_object *jobj = json_object_new_object();
+    int i = ln_normalize(ctx, line, strlen(line), &jobj);
+    norm->rv = i;
+    if (jobj == NULL) {
+       // jobj was null, create new generic jobj for error logging.
+       jobj = json_object_new_object();
+       json_object_object_add(jobj, "Error", json_object_new_string("Error occurred during ln_normalize()"));
+    	norm->jref = jobj;
+    } else {
+       // jobj was not null
+    	norm->jref = jobj;
+    }
+    return norm;
 }
 
 char *readResult(struct json_object *jref) {

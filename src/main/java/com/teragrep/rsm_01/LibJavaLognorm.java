@@ -101,6 +101,15 @@ public interface LibJavaLognorm extends Library {
         public boolean CTXOPT_ADD_RULE_LOCATION;
     }
 
+    @FieldOrder({
+            "rv", "jref"
+    })
+    public static class NormalizedStruct extends Structure {
+
+        public int rv;
+        public Pointer jref;
+    }
+
     // Returns the version of the currently used library.
     public abstract String version();
 
@@ -123,7 +132,7 @@ public interface LibJavaLognorm extends Library {
     public abstract int loadSamplesFromString(Pointer ctx, String string);
 
     // normalize gets the log string that is being normalized as input argument, along with the library context. Returns pointer to a json object.
-    public abstract Pointer normalize(Pointer ctx, String text);
+    public abstract NormalizedStruct normalize(Pointer ctx, String text, NormalizedStruct norm);
 
     // Reads the results of the normalization.
     public abstract String readResult(Pointer jref);
