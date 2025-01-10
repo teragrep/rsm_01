@@ -53,7 +53,7 @@ public final class JavaLognormImpl implements JavaLognorm {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JavaLognormImpl.class);
 
-    private Pointer ctx;
+    private final Pointer ctx;
 
     public JavaLognormImpl() {
         this(new JavaLognorm.Smart().liblognormInitCtx());
