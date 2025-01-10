@@ -49,11 +49,11 @@ import com.sun.jna.Pointer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class JavaLognorm {
+public final class JavaLognormImpl {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JavaLognorm.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JavaLognormImpl.class);
 
-    public JavaLognorm() {
+    public JavaLognormImpl() {
     }
 
     public String liblognormVersionCheck() {
