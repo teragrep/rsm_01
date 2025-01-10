@@ -114,7 +114,7 @@ public interface LibJavaLognorm extends Library {
     public abstract void setCtxOpts(Pointer ctx, OptionsStruct opts);
 
     // Return 1 if library is build with advanced statistics activated, 0 if not.
-    public abstract int hasAdvancedStats();
+    public abstract boolean hasAdvancedStats();
 
     // Loads the rulebase from a file to the context.
     public abstract int loadSamples(Pointer ctx, String filename);

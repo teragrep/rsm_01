@@ -56,10 +56,6 @@ public final class JavaLognormImpl {
     public JavaLognormImpl() {
     }
 
-    public String liblognormVersionCheck() {
-        return LibJavaLognorm.jnaInstance.version();
-    }
-
     public Pointer liblognormInitCtx() {
         return LibJavaLognorm.jnaInstance.initCtx();
     }
@@ -78,10 +74,6 @@ public final class JavaLognormImpl {
 
     public int liblognormLoadSamplesFromString(Pointer ctx, String samples) {
         return LibJavaLognorm.jnaInstance.loadSamplesFromString(ctx, samples);
-    }
-
-    public int liblognormHasAdvancedStats() {
-        return LibJavaLognorm.jnaInstance.hasAdvancedStats();
     }
 
     public Pointer liblognormNormalize(Pointer ctx, String text) {
