@@ -133,10 +133,6 @@ public final class JavaLognormImpl implements JavaLognorm {
         LibJavaLognorm.jnaInstance.destroyResult(jref);
     }
 
-    public void liblognormEnableDebug(int i) {
-        LibJavaLognorm.jnaInstance.enableDebug(ctx, i);
-    }
-
     public int liblognormSetDebugCB() {
         LibJavaLognorm.DebugCallback.DebugCallbackImpl callbackImpl = new LibJavaLognorm.DebugCallback.DebugCallbackImpl();
         return LibJavaLognorm.jnaInstance.setDebugCB(ctx, callbackImpl);

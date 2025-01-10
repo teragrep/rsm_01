@@ -149,7 +149,11 @@ void enableDebug(ln_ctx *ctx, int i) {
 }
 
 int setDebugCB(ln_ctx *ctx, const DebugCallback debugCallback) {
-    return ln_setDebugCB(*ctx, debugCallback, NULL);
+    int rv = ln_setDebugCB(*ctx, debugCallback, NULL);
+    if (rv == 0) {
+        ln_enableDebug(*ctx, 1);
+    }
+    return rv;
 };
 
 int setErrMsgCB(ln_ctx *ctx, const ErrorCallback errorCallback) {

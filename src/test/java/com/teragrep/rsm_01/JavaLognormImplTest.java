@@ -194,24 +194,11 @@ class JavaLognormImplTest {
     }
 
     @Test
-    public void enableDebugTest() {
-        JavaLognormImpl javaLognormImpl = new JavaLognormImpl();
-
-        assertDoesNotThrow(() -> {
-            javaLognormImpl.liblognormEnableDebug(1);
-        });
-
-        // cleanup
-        javaLognormImpl.liblognormExitCtx();
-    }
-
-    @Test
     public void setDebugCBTest() {
         JavaLognormImpl javaLognormImpl = new JavaLognormImpl();
 
         int a = javaLognormImpl.liblognormSetDebugCB();
         Assertions.assertEquals(0, a); // 0 if setting debug message handler was a success.
-        javaLognormImpl.liblognormEnableDebug(1);
 
         // cleanup
         javaLognormImpl.liblognormExitCtx();

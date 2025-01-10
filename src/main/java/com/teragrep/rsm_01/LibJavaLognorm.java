@@ -140,9 +140,6 @@ public interface LibJavaLognorm extends Library {
     // Releases the results of the normalization from memory.
     public abstract void destroyResult(Pointer jref);
 
-    // Enable or disable debugging for the context.
-    public abstract void enableDebug(Pointer ctx, int i);
-
     // Set a callback for debug logging
     public abstract int setDebugCB(Pointer ctx, DebugCallback func);
 
