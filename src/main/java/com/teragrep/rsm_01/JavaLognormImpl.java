@@ -56,11 +56,11 @@ public final class JavaLognormImpl implements JavaLognorm {
     private Pointer ctx;
 
     public JavaLognormImpl() {
-        ctx = LibJavaLognorm.jnaInstance.initCtx();
+        this(new JavaLognorm.Smart().liblognormInitCtx());
     }
 
-    public Pointer liblognormInitCtx() {
-        return LibJavaLognorm.jnaInstance.initCtx();
+    public JavaLognormImpl(Pointer ctx) {
+        this.ctx = ctx;
     }
 
     public int liblognormExitCtx() {

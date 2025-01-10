@@ -76,5 +76,16 @@ public interface JavaLognorm {
         public String liblognormVersionCheck() {
             return LibJavaLognorm.jnaInstance.version();
         }
+
+        public Pointer liblognormInitCtx() {
+            Pointer ctx = LibJavaLognorm.jnaInstance.initCtx();
+            // Do java exception handling that can't be done in C.
+            if (ctx == Pointer.NULL) {
+                throw new NullPointerException(
+                        "ln_initCtx() returned a null pointer, liblognorm failed to initialize the context."
+                );
+            }
+            return ctx;
+        }
     }
 }

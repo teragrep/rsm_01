@@ -47,7 +47,6 @@ package com.teragrep.rsm_01;
 
 import com.sun.jna.Pointer;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -60,13 +59,15 @@ class JavaLognormImplTest {
         Assertions.assertEquals("2.0.6", s);
     }
 
-    @Disabled(value = "WIP")
     @Test
     public void ctxTest() {
-        JavaLognormImpl javaLognormImpl = new JavaLognormImpl();
-        Pointer ctx = javaLognormImpl.liblognormInitCtx();
-        Assertions.assertNotNull(ctx);
-        javaLognormImpl.liblognormExitCtx();
+        assertDoesNotThrow(() -> {
+            Pointer ctx = new JavaLognorm.Smart().liblognormInitCtx();
+            Assertions.assertNotNull(ctx);
+            JavaLognormImpl javaLognormImpl = new JavaLognormImpl(ctx);
+            int i = javaLognormImpl.liblognormExitCtx(); // Returns zero on success, something else otherwise.
+            Assertions.assertEquals(0, i);
+        });
     }
 
     @Test
