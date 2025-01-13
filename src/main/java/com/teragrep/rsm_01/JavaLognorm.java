@@ -49,7 +49,7 @@ import com.sun.jna.Pointer;
 
 public interface JavaLognorm {
 
-    public abstract int liblognormExitCtx();
+    public abstract void liblognormExitCtx();
 
     public abstract void liblognormSetCtxOpts(LibJavaLognorm.OptionsStruct opts);
 
@@ -57,11 +57,7 @@ public interface JavaLognorm {
 
     public abstract int liblognormLoadSamplesFromString(String samples);
 
-    public abstract Pointer liblognormNormalize(String text);
-
-    public abstract String liblognormReadResult(Pointer jref);
-
-    public abstract void liblognormDestroyResult(Pointer jref);
+    public abstract String liblognormNormalize(String text);
 
     public abstract int liblognormSetDebugCB();
 

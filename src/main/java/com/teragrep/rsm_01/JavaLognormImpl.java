@@ -63,14 +63,17 @@ public final class JavaLognormImpl implements JavaLognorm {
         this.ctx = ctx;
     }
 
-    public int liblognormExitCtx() {
-        if (ctx != Pointer.NULL) {
-            return LibJavaLognorm.jnaInstance.exitCtx(ctx);
-        }
-        else {
+    public void liblognormExitCtx() {
+        if (ctx == Pointer.NULL) {
             throw new IllegalArgumentException(
                     "LogNorm() not initialized. Use liblognormInitCtx() to initialize the ctx."
             );
+        }
+
+        int i = LibJavaLognorm.jnaInstance.exitCtx(ctx);
+        if (i != 0) {
+            LOGGER.error("ln_exitCtx() returned error code <{}>", i);
+            throw new IllegalArgumentException("ln_exitCtx() returned " + i + " instead of 0");
         }
     }
 
@@ -96,20 +99,23 @@ public final class JavaLognormImpl implements JavaLognorm {
         }
     }
 
-    public int liblognormLoadSamplesFromString(String samples) {
-        if (ctx != Pointer.NULL) {
-            return LibJavaLognorm.jnaInstance.loadSamplesFromString(ctx, samples);
-        }
-        else {
+    public void liblognormLoadSamplesFromString(String samples) {
+        if (ctx == Pointer.NULL) {
             throw new IllegalArgumentException(
                     "LogNorm() not initialized. Use liblognormInitCtx() to initialize the ctx."
             );
         }
+
+        int i = LibJavaLognorm.jnaInstance.loadSamplesFromString(ctx, samples);
+        if (i != 0) {
+            LOGGER.error("ln_loadSamplesFromString() returned error code <{}>", i);
+            throw new IllegalArgumentException("ln_loadSamplesFromString() returned " + i + " instead of 0");
+        }
     }
 
     /* If an error is detected by the library, the method returns an error code and generated jref containing further error details in normalized form.
-     Otherwise returns 0 and the message in normalized form.*/
-    public Pointer liblognormNormalize(String text) {
+     Otherwise, returns 0 and the message in normalized form.*/
+    public String liblognormNormalize(String text) {
         if (ctx != Pointer.NULL) {
             LibJavaLognorm.NormalizedStruct norm = new LibJavaLognorm.NormalizedStruct();
             LibJavaLognorm.NormalizedStruct result = LibJavaLognorm.jnaInstance.normalize(ctx, text, norm);
@@ -117,15 +123,15 @@ public final class JavaLognormImpl implements JavaLognorm {
                 // error occurred
                 LOGGER
                         .error(
-                                "LogNorm() failed to perform extraction with error code <{}>. Generated error information: <{}>",
+                                "ln_normalize() failed to perform extraction with error code <{}>. Generated error information: <{}>",
                                 result.rv, liblognormReadResult(result.jref)
                         );
                 liblognormDestroyResult(result.jref); // cleanup
                 throw new IllegalArgumentException(
-                        "LogNorm() failed to perform extraction with error code: " + result.rv
+                        "ln_normalize() failed to perform extraction with error code: " + result.rv
                 );
             }
-            return result.jref;
+            return liblognormReadResult(result.jref);
         }
         else {
             throw new IllegalArgumentException(
@@ -134,23 +140,20 @@ public final class JavaLognormImpl implements JavaLognorm {
         }
     }
 
-    public String liblognormReadResult(Pointer jref) {
-        if (ctx != Pointer.NULL) {
-            if (jref == Pointer.NULL) {
-                throw new NullPointerException("LogNorm() failed to perform extraction.");
-            }
-            String cstring = LibJavaLognorm.jnaInstance.readResult(jref);
-            String javaString = String.copyValueOf(cstring.toCharArray(), 0, cstring.length());
-            return javaString;
-        }
-        else {
+    private String liblognormReadResult(Pointer jref) {
+        if (ctx == Pointer.NULL) {
             throw new IllegalArgumentException(
                     "LogNorm() not initialized. Use liblognormInitCtx() to initialize the ctx."
             );
         }
+
+        String cstring = LibJavaLognorm.jnaInstance.readResult(jref);
+        String javaString = String.copyValueOf(cstring.toCharArray(), 0, cstring.length());
+        liblognormDestroyResult(jref);
+        return javaString;
     }
 
-    public void liblognormDestroyResult(Pointer jref) {
+    private void liblognormDestroyResult(Pointer jref) {
         LibJavaLognorm.jnaInstance.destroyResult(jref);
     }
 
