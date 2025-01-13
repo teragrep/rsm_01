@@ -197,8 +197,6 @@ class JavaLognormTest {
         Assertions.assertEquals(0, a); // 0 if setting debug message handler was a success.
         javaLognorm.liblognormEnableDebug(ctx, 1);
 
-        // Assert debug log messages here. Logs can include memory information so they are not identical in each run.
-
         // cleanup
         javaLognorm.liblognormExitCtx(ctx);
     }
@@ -211,8 +209,6 @@ class JavaLognormTest {
 
         int a = javaLognorm.liblognormSetErrMsgCB(ctx);
         Assertions.assertEquals(0, a); // 0 if setting error message handler was a success.
-
-        // Assert error log messages here.
 
         // cleanup
         javaLognorm.liblognormExitCtx(ctx);
