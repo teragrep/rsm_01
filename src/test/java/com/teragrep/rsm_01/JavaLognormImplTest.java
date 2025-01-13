@@ -45,12 +45,24 @@
  */
 package com.teragrep.rsm_01;
 
+import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class JavaLognormImplTest {
+
+    @BeforeAll
+    public static void log4jconfig() {
+        // log4j2 configuration
+        Path log4j2Config = Paths.get("src/test/resources/log4j2.properties");
+        Configurator.reconfigure(log4j2Config.toUri());
+    }
 
     @Test
     public void versionTest() {
