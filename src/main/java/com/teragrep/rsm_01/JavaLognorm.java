@@ -53,15 +53,15 @@ public interface JavaLognorm {
 
     public abstract void liblognormSetCtxOpts(LibJavaLognorm.OptionsStruct opts);
 
-    public abstract int liblognormLoadSamples(String samples);
+    public abstract void liblognormLoadSamples(String samples);
 
-    public abstract int liblognormLoadSamplesFromString(String samples);
+    public abstract void liblognormLoadSamplesFromString(String samples);
 
     public abstract String liblognormNormalize(String text);
 
-    public abstract int liblognormSetDebugCB();
+    public abstract void liblognormSetDebugCB();
 
-    public abstract int liblognormSetErrMsgCB();
+    public abstract void liblognormSetErrMsgCB();
 
     public static final class Smart {
 

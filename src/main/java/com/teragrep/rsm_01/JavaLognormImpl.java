@@ -88,14 +88,17 @@ public final class JavaLognormImpl implements JavaLognorm {
         }
     }
 
-    public int liblognormLoadSamples(String samples) {
-        if (ctx != Pointer.NULL) {
-            return LibJavaLognorm.jnaInstance.loadSamples(ctx, samples);
-        }
-        else {
+    public void liblognormLoadSamples(String samples) {
+        if (ctx == Pointer.NULL) {
             throw new IllegalArgumentException(
                     "LogNorm() not initialized. Use liblognormInitCtx() to initialize the ctx."
             );
+        }
+
+        int i = LibJavaLognorm.jnaInstance.loadSamples(ctx, samples);
+        if (i != 0) {
+            LOGGER.error("ln_loadSamples() returned error code <{}>", i);
+            throw new IllegalArgumentException("Load samples returned " + i + " instead of 0");
         }
     }
 
@@ -157,27 +160,33 @@ public final class JavaLognormImpl implements JavaLognorm {
         LibJavaLognorm.jnaInstance.destroyResult(jref);
     }
 
-    public int liblognormSetDebugCB() {
-        if (ctx != Pointer.NULL) {
-            LibJavaLognorm.DebugCallback.DebugCallbackImpl callbackImpl = new LibJavaLognorm.DebugCallback.DebugCallbackImpl();
-            return LibJavaLognorm.jnaInstance.setDebugCB(ctx, callbackImpl);
-        }
-        else {
+    public void liblognormSetDebugCB() {
+        if (ctx == Pointer.NULL) {
             throw new IllegalArgumentException(
                     "LogNorm() not initialized. Use liblognormInitCtx() to initialize the ctx."
             );
+        }
+
+        LibJavaLognorm.DebugCallback.DebugCallbackImpl callbackImpl = new LibJavaLognorm.DebugCallback.DebugCallbackImpl();
+        int i = LibJavaLognorm.jnaInstance.setDebugCB(ctx, callbackImpl);
+        if (i != 0) {
+            LOGGER.error("ln_setDebugCB() returned error code <{}>", i);
+            throw new IllegalArgumentException("ln_setDebugCB() returned " + i + " instead of 0");
         }
     }
 
-    public int liblognormSetErrMsgCB() {
-        if (ctx != Pointer.NULL) {
-            LibJavaLognorm.ErrorCallback.ErrorCallbackImpl callbackImpl = new LibJavaLognorm.ErrorCallback.ErrorCallbackImpl();
-            return LibJavaLognorm.jnaInstance.setErrMsgCB(ctx, callbackImpl);
-        }
-        else {
+    public void liblognormSetErrMsgCB() {
+        if (ctx == Pointer.NULL) {
             throw new IllegalArgumentException(
                     "LogNorm() not initialized. Use liblognormInitCtx() to initialize the ctx."
             );
+        }
+
+        LibJavaLognorm.ErrorCallback.ErrorCallbackImpl callbackImpl = new LibJavaLognorm.ErrorCallback.ErrorCallbackImpl();
+        int i = LibJavaLognorm.jnaInstance.setErrMsgCB(ctx, callbackImpl);
+        if (i != 0) {
+            LOGGER.error("ln_setErrMsgCB() returned error code <{}>", i);
+            throw new IllegalArgumentException("ln_setErrMsgCB() returned " + i + " instead of 0");
         }
     }
 

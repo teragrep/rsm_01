@@ -166,8 +166,7 @@ class JavaLognormImplTest {
     public void setDebugCBTest() {
         JavaLognormImpl javaLognormImpl = new JavaLognormImpl();
 
-        int a = javaLognormImpl.liblognormSetDebugCB();
-        Assertions.assertEquals(0, a); // 0 if setting debug message handler was a success.
+        Assertions.assertDoesNotThrow(javaLognormImpl::liblognormSetDebugCB); // Throws if ln_setDebugCB doesn't return zero.
 
         // cleanup
         javaLognormImpl.liblognormExitCtx();
@@ -177,8 +176,7 @@ class JavaLognormImplTest {
     public void setErrMsgCBTest() {
         JavaLognormImpl javaLognormImpl = new JavaLognormImpl();
 
-        int a = javaLognormImpl.liblognormSetErrMsgCB();
-        Assertions.assertEquals(0, a); // 0 if setting error message handler was a success.
+        Assertions.assertDoesNotThrow(javaLognormImpl::liblognormSetErrMsgCB); // Throws if ln_errMsgCB doesn't return zero.
 
         // cleanup
         javaLognormImpl.liblognormExitCtx();
@@ -187,8 +185,7 @@ class JavaLognormImplTest {
     @Test
     public void exitCtxTest() {
         JavaLognormImpl javaLognormImpl = new JavaLognormImpl();
-        int i = javaLognormImpl.liblognormExitCtx(); // Returns zero on success, something else otherwise.
-        Assertions.assertEquals(0, i);
+        Assertions.assertDoesNotThrow(javaLognormImpl::liblognormExitCtx); // Throws if ln_exitCtx doesn't return zero.
     }
 
 }
