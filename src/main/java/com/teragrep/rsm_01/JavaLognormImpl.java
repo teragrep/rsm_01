@@ -129,7 +129,6 @@ public final class JavaLognormImpl implements JavaLognorm {
                                 "ln_normalize() failed to perform extraction with error code <{}>. Generated error information: <{}>",
                                 result.rv, liblognormReadResult(result.jref)
                         );
-                liblognormDestroyResult(result.jref); // cleanup
                 throw new IllegalArgumentException(
                         "ln_normalize() failed to perform extraction with error code: " + result.rv
                 );
