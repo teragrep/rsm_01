@@ -76,7 +76,7 @@ public class LogMessageMatcher {
 
         // Attach our test appender and make sure the messages will be logged
         loggerForTarget.addAppender(appender);
-        loggerForTarget.setLevel(Level.INFO);
+        loggerForTarget.setLevel(Level.DEBUG);
 
         try {
             // Run the method under test.
