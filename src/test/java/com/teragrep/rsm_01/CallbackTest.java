@@ -68,26 +68,27 @@ public class CallbackTest {
         Configurator.reconfigure(log4j2Config.toUri());
     }
 
-    @Disabled(value = "WIP")
     @Test
     public void setDebugCBTest() {
 
-        DebugCallback.DebugCallbackImpl callbackImpl = new DebugCallback.DebugCallbackImpl();
-        Logger loggerForTarget = (Logger) LogManager.getLogger(DebugCallback.DebugCallbackImpl.class);
+        DebugCallbackImpl callbackImpl = new DebugCallbackImpl();
+        Logger loggerForTarget = (Logger) LogManager.getLogger(DebugCallbackImpl.class); // com.teragrep.rsm_01.DebugCallback$DebugCallbackImpl
         String s = "Something happened";
         callbackImpl.invoke(Pointer.NULL, s, s.length());
         // Implement rest of the log message matching.
         assertLogMessages(
-                loggerForTarget, () -> callbackImpl.invoke(Pointer.NULL, s, s.length()), "Something happened"
+                loggerForTarget, () -> callbackImpl.invoke(Pointer.NULL, s, s.length()), "liblognorm: Something happened"
         );
     }
 
+    @Disabled(value = "WIP")
     @Test
     public void setDebugCBTest2() {
 
         JavaLognormImpl javaLognorm = new JavaLognormImpl();
         javaLognorm.liblognormSetDebugCB();
-        Logger loggerForTarget = (Logger) LogManager.getLogger(JavaLognormImpl.class);
+        Logger loggerForTarget = (Logger) LogManager.getLogger(JavaLognormImpl.class); // com.teragrep.rsm_01.JavaLognormImpl
+        javaLognorm.liblognormLoadSamplesFromString("rule=:%all:rest%");
         // Implement rest of the log message matching.
         assertLogMessages(
                 loggerForTarget, () -> javaLognorm.liblognormLoadSamplesFromString("rule=:%all:rest%"), "Start doing something"
