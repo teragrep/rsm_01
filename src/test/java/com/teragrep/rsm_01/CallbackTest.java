@@ -68,12 +68,12 @@ public class CallbackTest {
         Configurator.reconfigure(log4j2Config.toUri());
     }
 
-    @Disabled
+    @Disabled(value = "WIP")
     @Test
     public void setDebugCBTest() {
 
-        LibJavaLognorm.DebugCallback.DebugCallbackImpl callbackImpl = new LibJavaLognorm.DebugCallback.DebugCallbackImpl();
-        Logger loggerForTarget = (Logger) LogManager.getLogger(LibJavaLognorm.DebugCallback.DebugCallbackImpl.class);
+        DebugCallback.DebugCallbackImpl callbackImpl = new DebugCallback.DebugCallbackImpl();
+        Logger loggerForTarget = (Logger) LogManager.getLogger(DebugCallback.DebugCallbackImpl.class);
         String s = "Something happened";
         callbackImpl.invoke(Pointer.NULL, s, s.length());
         // Implement rest of the log message matching.
@@ -88,7 +88,6 @@ public class CallbackTest {
         JavaLognormImpl javaLognorm = new JavaLognormImpl();
         javaLognorm.liblognormSetDebugCB();
         Logger loggerForTarget = (Logger) LogManager.getLogger(JavaLognormImpl.class);
-        javaLognorm.liblognormLoadSamplesFromString("rule=:%all:rest%");
         // Implement rest of the log message matching.
         assertLogMessages(
                 loggerForTarget, () -> javaLognorm.liblognormLoadSamplesFromString("rule=:%all:rest%"), "Start doing something"
