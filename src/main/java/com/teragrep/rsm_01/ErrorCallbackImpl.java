@@ -45,10 +45,16 @@
  */
 package com.teragrep.rsm_01;
 
-import com.sun.jna.Callback;
 import com.sun.jna.Pointer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public interface DebugCallback extends Callback {
+public class ErrorCallbackImpl implements ErrorCallback {
 
-    public abstract void invoke(Pointer cookie, String msg, int length);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ErrorCallbackImpl.class);
+
+    @Override
+    public void invoke(Pointer cookie, String msg, int length) {
+        LOGGER.error("liblognorm error: {}", msg);
+    }
 }
