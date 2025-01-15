@@ -65,6 +65,7 @@ public class LogMessageMatcher {
     public static void assertLogMessages(
             final Logger loggerForTarget,
             final Runnable targetLambda,
+            final int numberOfMessages,
             final String ... expectedLogMessages
     ) {
         final Appender appender = mock(Appender.class);
@@ -83,7 +84,7 @@ public class LogMessageMatcher {
             targetLambda.run();
 
             // Assert that the expected log messages are seen
-            verify(appender, times(expectedLogMessages.length)).append(logCaptor.capture());
+            verify(appender, times(numberOfMessages)).append(logCaptor.capture());
             Arrays
                     .stream(expectedLogMessages)
                     .forEach(
