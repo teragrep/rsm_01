@@ -51,7 +51,6 @@ import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
@@ -72,39 +71,52 @@ public class CallbackTest {
     public void setDebugCBTest() {
 
         DebugCallbackImpl callbackImpl = new DebugCallbackImpl();
-        Logger loggerForTarget = (Logger) LogManager.getLogger(DebugCallbackImpl.class); // com.teragrep.rsm_01.DebugCallback$DebugCallbackImpl
+        Logger loggerForTarget = (Logger) LogManager.getLogger(DebugCallbackImpl.class);
         String s = "Something happened";
-        callbackImpl.invoke(Pointer.NULL, s, s.length());
         // Implement rest of the log message matching.
         assertLogMessages(
-                loggerForTarget, () -> callbackImpl.invoke(Pointer.NULL, s, s.length()), "liblognorm: Something happened"
+                loggerForTarget, () -> callbackImpl.invoke(Pointer.NULL, s, s.length()), 1, "liblognorm: Something happened"
         );
     }
 
-    @Disabled(value = "WIP")
     @Test
     public void setDebugCBTest2() {
 
-        JavaLognormImpl javaLognorm = new JavaLognormImpl();
-        javaLognorm.liblognormSetDebugCB();
-        Logger loggerForTarget = (Logger) LogManager.getLogger(JavaLognormImpl.class); // com.teragrep.rsm_01.JavaLognormImpl
-        javaLognorm.liblognormLoadSamplesFromString("rule=:%all:rest%");
-        // Implement rest of the log message matching.
+        Pointer ctx = new JavaLognorm.Smart().liblognormInitCtx();
+        DebugCallbackImpl callbackImpl = new DebugCallbackImpl();
+        Logger loggerForTarget = (Logger) LogManager.getLogger(DebugCallbackImpl.class);
+        int i = LibJavaLognorm.jnaInstance.setDebugCB(ctx, callbackImpl);
+        Assertions.assertEquals(0, i);
         assertLogMessages(
-                loggerForTarget, () -> javaLognorm.liblognormLoadSamplesFromString("rule=:%all:rest%"), "Start doing something"
+                loggerForTarget, () -> LibJavaLognorm.jnaInstance.loadSamplesFromString(ctx, "rule=:%all:rest%"), 28, "liblognorm: ======================================="
         );
         // cleanup
-        javaLognorm.liblognormExitCtx();
+        LibJavaLognorm.jnaInstance.exitCtx(ctx);
     }
 
     @Test
     public void setErrMsgCBTest() {
-        JavaLognormImpl javaLognormImpl = new JavaLognormImpl();
+        ErrorCallbackImpl callbackImpl = new ErrorCallbackImpl();
+        Logger loggerForTarget = (Logger) LogManager.getLogger(ErrorCallbackImpl.class);
+        String s = "Something happened";
+        // Implement rest of the log message matching.
+        assertLogMessages(
+                loggerForTarget, () -> callbackImpl.invoke(Pointer.NULL, s, s.length()), 1, "liblognorm error: Something happened"
+        );
+    }
 
-        Assertions.assertDoesNotThrow(javaLognormImpl::liblognormSetErrMsgCB); // Throws if ln_errMsgCB doesn't return zero.
-
+    @Test
+    public void setErrMsgCBTest2() {
+        Pointer ctx = new JavaLognorm.Smart().liblognormInitCtx();
+        ErrorCallbackImpl callbackImpl = new ErrorCallbackImpl();
+        Logger loggerForTarget = (Logger) LogManager.getLogger(ErrorCallbackImpl.class);
+        int i = LibJavaLognorm.jnaInstance.setErrMsgCB(ctx, callbackImpl);
+        Assertions.assertEquals(0, i);
+        assertLogMessages(
+                loggerForTarget, () -> LibJavaLognorm.jnaInstance.loadSamplesFromString(ctx, "invalidSample"), 1, "liblognorm error: rulebase file --NO-FILE--[0]: invalid record type detected: 'invalidSample'"
+        );
         // cleanup
-        javaLognormImpl.liblognormExitCtx();
+        LibJavaLognorm.jnaInstance.exitCtx(ctx);
     }
 
 }
