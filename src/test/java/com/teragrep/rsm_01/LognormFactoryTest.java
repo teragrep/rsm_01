@@ -45,27 +45,46 @@
  */
 package com.teragrep.rsm_01;
 
-public interface JavaLognorm {
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-    public abstract void liblognormLoadSamples(String samples);
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-    public abstract void liblognormLoadSamplesFromString(String samples);
+public class LognormFactoryTest {
 
-    public abstract String liblognormNormalize(String text);
+    @Test
+    public void setCtxOptsTest() {
+        assertDoesNotThrow(() -> {
+            LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
+            opts.CTXOPT_ADD_ORIGINALMSG = true;
+            LognormFactory lognormFactory = new LognormFactory(opts);
+            JavaLognormImpl javaLognormImpl = lognormFactory.lognorm();
+            // Assert that original message is included in the result to see if opts are working
+            String samplesString = "rule=:%all:rest%";
+            javaLognormImpl.liblognormLoadSamplesFromString(samplesString); // Throws exception if fails to load samples
+            String s = javaLognormImpl.liblognormNormalize("offline");
+            Assertions.assertEquals("{ \"all\": \"offline\", \"originalmsg\": \"offline\" }", s);
 
-    public abstract void liblognormSetDebugCB();
-
-    public abstract void liblognormSetErrMsgCB();
-
-    public static final class Smart {
-
-        public boolean liblognormHasAdvancedStats() {
-            return LibJavaLognorm.jnaInstance.hasAdvancedStats();
-        }
-
-        public String liblognormVersionCheck() {
-            return LibJavaLognorm.jnaInstance.version();
-        }
-
+            // cleanup
+            javaLognormImpl.close();
+        });
     }
+
+    @Test
+    public void defaultCtxOptsTest() {
+        assertDoesNotThrow(() -> {
+            LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
+            LognormFactory lognormFactory = new LognormFactory(opts);
+            JavaLognormImpl javaLognormImpl = lognormFactory.lognorm();
+            // Assert that original message is included in the result to see if opts are working
+            String samplesString = "rule=:%all:rest%";
+            javaLognormImpl.liblognormLoadSamplesFromString(samplesString); // Throws exception if fails to load samples
+            String s = javaLognormImpl.liblognormNormalize("offline");
+            Assertions.assertEquals("{ \"all\": \"offline\" }", s);
+
+            // cleanup
+            javaLognormImpl.close();
+        });
+    }
+
 }

@@ -45,7 +45,6 @@
  */
 package com.teragrep.rsm_01;
 
-import com.sun.jna.Pointer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -60,41 +59,11 @@ class JavaLognormImplTest {
     }
 
     @Test
-    public void ctxTest() {
-        assertDoesNotThrow(() -> {
-            Pointer ctx = new JavaLognorm.Smart().liblognormInitCtx();
-            Assertions.assertNotNull(ctx);
-            JavaLognormImpl javaLognormImpl = new JavaLognormImpl(ctx);
-            javaLognormImpl.close(); // Throws exception if fails to initialize
-        });
-    }
-
-    @Test
-    public void setCtxOptsTest() {
-        assertDoesNotThrow(() -> {
-            JavaLognormImpl javaLognormImpl = new JavaLognormImpl();
-            LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
-            opts.CTXOPT_ADD_EXEC_PATH = false;
-            opts.CTXOPT_ADD_ORIGINALMSG = true;
-            opts.CTXOPT_ADD_RULE = false;
-            opts.CTXOPT_ADD_RULE_LOCATION = false;
-            opts.CTXOPT_ALLOW_REGEX = false;
-            javaLognormImpl.liblognormSetCtxOpts(opts);
-            // Assert that original message is included in the result to see if opts are working
-            String samplesString = "rule=:%all:rest%";
-            javaLognormImpl.liblognormLoadSamplesFromString(samplesString); // Throws exception if fails to load samples
-            String s = javaLognormImpl.liblognormNormalize("offline");
-            Assertions.assertEquals("{ \"all\": \"offline\", \"originalmsg\": \"offline\" }", s);
-
-            // cleanup
-            javaLognormImpl.close();
-        });
-    }
-
-    @Test
     public void loadSamplesTest() {
         assertDoesNotThrow(() -> {
-            JavaLognormImpl javaLognormImpl = new JavaLognormImpl();
+            LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
+            LognormFactory lognormFactory = new LognormFactory(opts);
+            JavaLognormImpl javaLognormImpl = lognormFactory.lognorm();
             String samplesPath = "src/test/resources/sample.rulebase";
             javaLognormImpl.liblognormLoadSamples(samplesPath); // Throws exception if fails to load samples
             javaLognormImpl.close();
@@ -104,7 +73,9 @@ class JavaLognormImplTest {
     @Test
     public void loadSamplesFromStringTest() {
         assertDoesNotThrow(() -> {
-            JavaLognormImpl javaLognormImpl = new JavaLognormImpl();
+            LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
+            LognormFactory lognormFactory = new LognormFactory(opts);
+            JavaLognormImpl javaLognormImpl = lognormFactory.lognorm();
             javaLognormImpl.liblognormLoadSamplesFromString("rule=:%all:rest%"); // Throws exception if fails to load samples
             javaLognormImpl.close();
         });
@@ -119,14 +90,9 @@ class JavaLognormImplTest {
     @Test
     public void normalizeTest() {
         assertDoesNotThrow(() -> {
-            JavaLognormImpl javaLognormImpl = new JavaLognormImpl();
             LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
-            opts.CTXOPT_ADD_EXEC_PATH = false;
-            opts.CTXOPT_ADD_ORIGINALMSG = false;
-            opts.CTXOPT_ADD_RULE = false;
-            opts.CTXOPT_ADD_RULE_LOCATION = false;
-            opts.CTXOPT_ALLOW_REGEX = false;
-            javaLognormImpl.liblognormSetCtxOpts(opts);
+            LognormFactory lognormFactory = new LognormFactory(opts);
+            JavaLognormImpl javaLognormImpl = lognormFactory.lognorm();
             String samplesString = "rule=:%all:rest%";
 
             javaLognormImpl.liblognormLoadSamplesFromString(samplesString);
@@ -141,14 +107,9 @@ class JavaLognormImplTest {
     @Test
     public void normalizeExceptionTest() {
         assertDoesNotThrow(() -> {
-            JavaLognormImpl javaLognormImpl = new JavaLognormImpl();
             LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
-            opts.CTXOPT_ADD_EXEC_PATH = false;
-            opts.CTXOPT_ADD_ORIGINALMSG = false;
-            opts.CTXOPT_ADD_RULE = false;
-            opts.CTXOPT_ADD_RULE_LOCATION = false;
-            opts.CTXOPT_ALLOW_REGEX = false;
-            javaLognormImpl.liblognormSetCtxOpts(opts);
+            LognormFactory lognormFactory = new LognormFactory(opts);
+            JavaLognormImpl javaLognormImpl = lognormFactory.lognorm();
             String samplesString = "invalidRulebase"; // load rulebase that will cause exception
 
             javaLognormImpl.liblognormLoadSamplesFromString(samplesString);
@@ -164,7 +125,9 @@ class JavaLognormImplTest {
 
     @Test
     public void setDebugCBTest() {
-        JavaLognormImpl javaLognormImpl = new JavaLognormImpl();
+        LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
+        LognormFactory lognormFactory = new LognormFactory(opts);
+        JavaLognormImpl javaLognormImpl = lognormFactory.lognorm();
 
         Assertions.assertDoesNotThrow(javaLognormImpl::liblognormSetDebugCB); // Throws if ln_setDebugCB doesn't return zero.
 
@@ -174,7 +137,9 @@ class JavaLognormImplTest {
 
     @Test
     public void setErrMsgCBTest() {
-        JavaLognormImpl javaLognormImpl = new JavaLognormImpl();
+        LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
+        LognormFactory lognormFactory = new LognormFactory(opts);
+        JavaLognormImpl javaLognormImpl = lognormFactory.lognorm();
 
         Assertions.assertDoesNotThrow(javaLognormImpl::liblognormSetErrMsgCB); // Throws if ln_errMsgCB doesn't return zero.
 
@@ -184,7 +149,9 @@ class JavaLognormImplTest {
 
     @Test
     public void exitCtxTest() {
-        JavaLognormImpl javaLognormImpl = new JavaLognormImpl();
+        LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
+        LognormFactory lognormFactory = new LognormFactory(opts);
+        JavaLognormImpl javaLognormImpl = lognormFactory.lognorm();
         Assertions.assertDoesNotThrow(javaLognormImpl::close); // Throws if ln_exitCtx doesn't return zero.
     }
 

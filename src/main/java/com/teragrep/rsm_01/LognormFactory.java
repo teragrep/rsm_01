@@ -45,27 +45,25 @@
  */
 package com.teragrep.rsm_01;
 
-public interface JavaLognorm {
+import com.sun.jna.Pointer;
 
-    public abstract void liblognormLoadSamples(String samples);
+public final class LognormFactory {
 
-    public abstract void liblognormLoadSamplesFromString(String samples);
+    private final LibJavaLognorm.OptionsStruct options;
 
-    public abstract String liblognormNormalize(String text);
+    public LognormFactory(final LibJavaLognorm.OptionsStruct options) {
+        this.options = options;
+    }
 
-    public abstract void liblognormSetDebugCB();
-
-    public abstract void liblognormSetErrMsgCB();
-
-    public static final class Smart {
-
-        public boolean liblognormHasAdvancedStats() {
-            return LibJavaLognorm.jnaInstance.hasAdvancedStats();
+    public JavaLognormImpl lognorm() {
+        final Pointer ctx = LibJavaLognorm.jnaInstance.initCtx();
+        // Do java exception handling that can't be done in C.
+        if (ctx == Pointer.NULL) {
+            throw new NullPointerException(
+                    "ln_initCtx() returned a null pointer, liblognorm failed to initialize the context."
+            );
         }
-
-        public String liblognormVersionCheck() {
-            return LibJavaLognorm.jnaInstance.version();
-        }
-
+        LibJavaLognorm.jnaInstance.setCtxOpts(ctx, options);
+        return new JavaLognormImpl(ctx);
     }
 }

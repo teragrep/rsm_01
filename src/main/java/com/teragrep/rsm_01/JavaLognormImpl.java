@@ -55,10 +55,6 @@ public final class JavaLognormImpl implements JavaLognorm, AutoCloseable {
 
     private final Pointer ctx;
 
-    public JavaLognormImpl() {
-        this(new JavaLognorm.Smart().liblognormInitCtx());
-    }
-
     public JavaLognormImpl(Pointer ctx) {
         this.ctx = ctx;
     }
@@ -74,17 +70,6 @@ public final class JavaLognormImpl implements JavaLognorm, AutoCloseable {
         if (i != 0) {
             LOGGER.error("ln_exitCtx() returned error code <{}>", i);
             throw new IllegalArgumentException("ln_exitCtx() returned " + i + " instead of 0");
-        }
-    }
-
-    public void liblognormSetCtxOpts(LibJavaLognorm.OptionsStruct opts) {
-        if (ctx != Pointer.NULL) {
-            LibJavaLognorm.jnaInstance.setCtxOpts(ctx, opts);
-        }
-        else {
-            throw new IllegalArgumentException(
-                    "LogNorm() not initialized. Use liblognormInitCtx() to initialize the ctx."
-            );
         }
     }
 
@@ -190,7 +175,7 @@ public final class JavaLognormImpl implements JavaLognorm, AutoCloseable {
     }
 
     @Override
-    public void close() {
+    public void close() throws IllegalArgumentException {
         liblognormExitCtx();
     }
 }

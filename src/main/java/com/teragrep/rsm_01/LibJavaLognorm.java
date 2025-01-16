@@ -94,11 +94,11 @@ public interface LibJavaLognorm extends Library {
     })
     public static class OptionsStruct extends Structure {
 
-        public boolean CTXOPT_ALLOW_REGEX;
-        public boolean CTXOPT_ADD_EXEC_PATH;
-        public boolean CTXOPT_ADD_ORIGINALMSG;
-        public boolean CTXOPT_ADD_RULE;
-        public boolean CTXOPT_ADD_RULE_LOCATION;
+        public boolean CTXOPT_ALLOW_REGEX = false;
+        public boolean CTXOPT_ADD_EXEC_PATH = false;
+        public boolean CTXOPT_ADD_ORIGINALMSG = false;
+        public boolean CTXOPT_ADD_RULE = false;
+        public boolean CTXOPT_ADD_RULE_LOCATION = false;
     }
 
     @FieldOrder({
