@@ -49,7 +49,7 @@ import com.sun.jna.Pointer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class JavaLognormImpl implements JavaLognorm {
+public final class JavaLognormImpl implements JavaLognorm, AutoCloseable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JavaLognormImpl.class);
 
@@ -63,7 +63,7 @@ public final class JavaLognormImpl implements JavaLognorm {
         this.ctx = ctx;
     }
 
-    public void liblognormExitCtx() {
+    private void liblognormExitCtx() {
         if (ctx == Pointer.NULL) {
             throw new IllegalArgumentException(
                     "LogNorm() not initialized. Use liblognormInitCtx() to initialize the ctx."
@@ -189,4 +189,8 @@ public final class JavaLognormImpl implements JavaLognorm {
         }
     }
 
+    @Override
+    public void close() {
+        liblognormExitCtx();
+    }
 }

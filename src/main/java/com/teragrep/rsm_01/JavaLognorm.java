@@ -49,8 +49,6 @@ import com.sun.jna.Pointer;
 
 public interface JavaLognorm {
 
-    public abstract void liblognormExitCtx();
-
     public abstract void liblognormSetCtxOpts(LibJavaLognorm.OptionsStruct opts);
 
     public abstract void liblognormLoadSamples(String samples);

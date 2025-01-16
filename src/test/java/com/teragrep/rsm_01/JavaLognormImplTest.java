@@ -65,7 +65,7 @@ class JavaLognormImplTest {
             Pointer ctx = new JavaLognorm.Smart().liblognormInitCtx();
             Assertions.assertNotNull(ctx);
             JavaLognormImpl javaLognormImpl = new JavaLognormImpl(ctx);
-            javaLognormImpl.liblognormExitCtx(); // Throws exception if fails to initialize
+            javaLognormImpl.close(); // Throws exception if fails to initialize
         });
     }
 
@@ -87,7 +87,7 @@ class JavaLognormImplTest {
             Assertions.assertEquals("{ \"all\": \"offline\", \"originalmsg\": \"offline\" }", s);
 
             // cleanup
-            javaLognormImpl.liblognormExitCtx();
+            javaLognormImpl.close();
         });
     }
 
@@ -97,7 +97,7 @@ class JavaLognormImplTest {
             JavaLognormImpl javaLognormImpl = new JavaLognormImpl();
             String samplesPath = "src/test/resources/sample.rulebase";
             javaLognormImpl.liblognormLoadSamples(samplesPath); // Throws exception if fails to load samples
-            javaLognormImpl.liblognormExitCtx();
+            javaLognormImpl.close();
         });
     }
 
@@ -106,7 +106,7 @@ class JavaLognormImplTest {
         assertDoesNotThrow(() -> {
             JavaLognormImpl javaLognormImpl = new JavaLognormImpl();
             javaLognormImpl.liblognormLoadSamplesFromString("rule=:%all:rest%"); // Throws exception if fails to load samples
-            javaLognormImpl.liblognormExitCtx();
+            javaLognormImpl.close();
         });
     }
 
@@ -134,7 +134,7 @@ class JavaLognormImplTest {
             Assertions.assertEquals("{ \"all\": \"offline\" }", s);
 
             // cleanup
-            javaLognormImpl.liblognormExitCtx();
+            javaLognormImpl.close();
         });
     }
 
@@ -158,7 +158,7 @@ class JavaLognormImplTest {
                     .assertEquals("ln_normalize() failed to perform extraction with error code: -1000", e.getMessage());
 
             // cleanup
-            javaLognormImpl.liblognormExitCtx();
+            javaLognormImpl.close();
         });
     }
 
@@ -169,7 +169,7 @@ class JavaLognormImplTest {
         Assertions.assertDoesNotThrow(javaLognormImpl::liblognormSetDebugCB); // Throws if ln_setDebugCB doesn't return zero.
 
         // cleanup
-        javaLognormImpl.liblognormExitCtx();
+        javaLognormImpl.close();
     }
 
     @Test
@@ -179,13 +179,13 @@ class JavaLognormImplTest {
         Assertions.assertDoesNotThrow(javaLognormImpl::liblognormSetErrMsgCB); // Throws if ln_errMsgCB doesn't return zero.
 
         // cleanup
-        javaLognormImpl.liblognormExitCtx();
+        javaLognormImpl.close();
     }
 
     @Test
     public void exitCtxTest() {
         JavaLognormImpl javaLognormImpl = new JavaLognormImpl();
-        Assertions.assertDoesNotThrow(javaLognormImpl::liblognormExitCtx); // Throws if ln_exitCtx doesn't return zero.
+        Assertions.assertDoesNotThrow(javaLognormImpl::close); // Throws if ln_exitCtx doesn't return zero.
     }
 
 }
