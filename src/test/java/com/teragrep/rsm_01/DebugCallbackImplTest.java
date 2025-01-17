@@ -46,16 +46,23 @@
 package com.teragrep.rsm_01;
 
 import com.sun.jna.Pointer;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
-import static com.teragrep.rsm_01.LogMessageMatcher.assertLogMessages;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
 
 public class DebugCallbackImplTest {
 
@@ -71,10 +78,36 @@ public class DebugCallbackImplTest {
         DebugCallbackImpl callbackImpl = new DebugCallbackImpl();
         Logger loggerForTarget = (Logger) LogManager.getLogger(DebugCallbackImpl.class);
         String s = "Something happened";
-        // Implement rest of the log message matching.
-        assertLogMessages(
-                loggerForTarget, () -> callbackImpl.invoke(Pointer.NULL, s, s.length()), 1, "liblognorm: Something happened"
-        );
-    }
+        String expectedLogMessages = "liblognorm: Something happened";
 
+        final Appender appender = mock(Appender.class);
+        when(appender.getName()).thenReturn("Mock appender");
+        when(appender.isStarted()).thenReturn(true);
+        final ArgumentCaptor<LogEvent> logCaptor = ArgumentCaptor.forClass(LogEvent.class);
+        final Level effectiveLevel = loggerForTarget.getLevel(); // Save the initial logger state
+        // Attach our test appender and make sure the messages will be logged
+        loggerForTarget.addAppender(appender);
+        loggerForTarget.setLevel(Level.DEBUG);
+        try {
+            // invoke callback
+            callbackImpl.invoke(Pointer.NULL, s, s.length());
+            // Assert that the expected log messages are seen
+            verify(appender, times(1)).append(logCaptor.capture());
+            Arrays.stream(new String[] {
+                    expectedLogMessages
+            }
+            )
+                    .forEach(
+                            expectedLogMessage -> Assertions
+                                    .assertEquals(
+                                            logCaptor.getValue().getMessage().getFormattedMessage(), expectedLogMessage
+                                    )
+                    );
+        }
+        finally {
+            // Restore logger state in case this affects other tests
+            loggerForTarget.removeAppender(appender);
+            loggerForTarget.setLevel(effectiveLevel);
+        }
+    }
 }
