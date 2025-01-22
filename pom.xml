@@ -572,9 +572,9 @@
             <exclude>src/main/c/COPYING</exclude>
             <exclude>src/main/c/Makefile.am</exclude>
             <!-- test resources -->
-            <exclude>src/test/resources/cisco.rulebase</exclude>
-            <exclude>src/test/resources/messages.rulebase</exclude>
             <exclude>src/test/resources/sample.rulebase</exclude>
+            <exclude>src/test/resources/sample2.rulebase</exclude>
+            <exclude>src/test/resources/sample3.rulebase</exclude>
           </excludes>
         </configuration>
         <executions>
