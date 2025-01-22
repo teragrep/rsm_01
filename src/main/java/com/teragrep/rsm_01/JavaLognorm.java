@@ -53,10 +53,6 @@ public interface JavaLognorm {
 
     public abstract String liblognormNormalize(String text);
 
-    public abstract void liblognormSetDebugCB();
-
-    public abstract void liblognormSetErrMsgCB();
-
     public static final class Smart {
 
         public boolean liblognormHasAdvancedStats() {

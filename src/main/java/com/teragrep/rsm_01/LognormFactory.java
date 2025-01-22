@@ -46,8 +46,12 @@
 package com.teragrep.rsm_01;
 
 import com.sun.jna.Pointer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class LognormFactory {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(LognormFactory.class);
 
     private final LibJavaLognorm.OptionsStruct options;
 
@@ -63,7 +67,33 @@ public final class LognormFactory {
                     "ln_initCtx() returned a null pointer, liblognorm failed to initialize the context."
             );
         }
+        // Enable error logging for liblognorm ctx. Mandatory for proper exception handling in java.
+        liblognormSetErrMsgCB(ctx);
+        // Enable debug logging
+        if (LOGGER.isDebugEnabled()) {
+            liblognormSetDebugCB(ctx);
+        }
+        // Load options
         LibJavaLognorm.jnaInstance.setCtxOpts(ctx, options);
         return new JavaLognormImpl(ctx);
     }
+
+    private void liblognormSetDebugCB(Pointer ctx) {
+        LibJavaLognorm.DebugCallback.DebugCallbackImpl callbackImpl = new LibJavaLognorm.DebugCallback.DebugCallbackImpl();
+        int i = LibJavaLognorm.jnaInstance.setDebugCB(ctx, callbackImpl);
+        if (i != 0) {
+            LOGGER.error("ln_setDebugCB() returned error code <{}>", i);
+            throw new IllegalArgumentException("ln_setDebugCB() returned " + i + " instead of 0");
+        }
+    }
+
+    private void liblognormSetErrMsgCB(Pointer ctx) {
+        LibJavaLognorm.ErrorCallback.ErrorCallbackImpl callbackImpl = new LibJavaLognorm.ErrorCallback.ErrorCallbackImpl();
+        int i = LibJavaLognorm.jnaInstance.setErrMsgCB(ctx, callbackImpl);
+        if (i != 0) {
+            LOGGER.error("ln_setErrMsgCB() returned error code <{}>", i);
+            throw new IllegalArgumentException("ln_setErrMsgCB() returned " + i + " instead of 0");
+        }
+    }
+
 }

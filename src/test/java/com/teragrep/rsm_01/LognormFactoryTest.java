@@ -58,7 +58,7 @@ public class LognormFactoryTest {
             LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
             opts.CTXOPT_ADD_ORIGINALMSG = true;
             LognormFactory lognormFactory = new LognormFactory(opts);
-            JavaLognormImpl javaLognormImpl = lognormFactory.lognorm();
+            JavaLognormImpl javaLognormImpl = lognormFactory.lognorm(); // Throws exception if fails to initialize properly
             // Assert that original message is included in the result to see if opts are working
             String samplesString = "rule=:%all:rest%";
             javaLognormImpl.liblognormLoadSamplesFromString(samplesString); // Throws exception if fails to load samples
@@ -75,7 +75,7 @@ public class LognormFactoryTest {
         assertDoesNotThrow(() -> {
             LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
             LognormFactory lognormFactory = new LognormFactory(opts);
-            JavaLognormImpl javaLognormImpl = lognormFactory.lognorm();
+            JavaLognormImpl javaLognormImpl = lognormFactory.lognorm(); // Throws exception if fails to initialize properly
             // Assert that original message is included in the result to see if opts are working
             String samplesString = "rule=:%all:rest%";
             javaLognormImpl.liblognormLoadSamplesFromString(samplesString); // Throws exception if fails to load samples

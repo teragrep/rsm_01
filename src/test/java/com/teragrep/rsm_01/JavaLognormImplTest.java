@@ -124,30 +124,6 @@ class JavaLognormImplTest {
     }
 
     @Test
-    public void setDebugCBTest() {
-        LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
-        LognormFactory lognormFactory = new LognormFactory(opts);
-        JavaLognormImpl javaLognormImpl = lognormFactory.lognorm();
-
-        Assertions.assertDoesNotThrow(javaLognormImpl::liblognormSetDebugCB); // Throws if ln_setDebugCB doesn't return zero.
-
-        // cleanup
-        javaLognormImpl.close();
-    }
-
-    @Test
-    public void setErrMsgCBTest() {
-        LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
-        LognormFactory lognormFactory = new LognormFactory(opts);
-        JavaLognormImpl javaLognormImpl = lognormFactory.lognorm();
-
-        Assertions.assertDoesNotThrow(javaLognormImpl::liblognormSetErrMsgCB); // Throws if ln_errMsgCB doesn't return zero.
-
-        // cleanup
-        javaLognormImpl.close();
-    }
-
-    @Test
     public void exitCtxTest() {
         LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
         LognormFactory lognormFactory = new LognormFactory(opts);

@@ -144,36 +144,6 @@ public final class JavaLognormImpl implements JavaLognorm, AutoCloseable {
         LibJavaLognorm.jnaInstance.destroyResult(jref);
     }
 
-    public void liblognormSetDebugCB() {
-        if (ctx == Pointer.NULL) {
-            throw new IllegalArgumentException(
-                    "LogNorm() not initialized. Use liblognormInitCtx() to initialize the ctx."
-            );
-        }
-
-        LibJavaLognorm.DebugCallback.DebugCallbackImpl callbackImpl = new LibJavaLognorm.DebugCallback.DebugCallbackImpl();
-        int i = LibJavaLognorm.jnaInstance.setDebugCB(ctx, callbackImpl);
-        if (i != 0) {
-            LOGGER.error("ln_setDebugCB() returned error code <{}>", i);
-            throw new IllegalArgumentException("ln_setDebugCB() returned " + i + " instead of 0");
-        }
-    }
-
-    public void liblognormSetErrMsgCB() {
-        if (ctx == Pointer.NULL) {
-            throw new IllegalArgumentException(
-                    "LogNorm() not initialized. Use liblognormInitCtx() to initialize the ctx."
-            );
-        }
-
-        LibJavaLognorm.ErrorCallback.ErrorCallbackImpl callbackImpl = new LibJavaLognorm.ErrorCallback.ErrorCallbackImpl();
-        int i = LibJavaLognorm.jnaInstance.setErrMsgCB(ctx, callbackImpl);
-        if (i != 0) {
-            LOGGER.error("ln_setErrMsgCB() returned error code <{}>", i);
-            throw new IllegalArgumentException("ln_setErrMsgCB() returned " + i + " instead of 0");
-        }
-    }
-
     @Override
     public void close() throws IllegalArgumentException {
         liblognormExitCtx();
