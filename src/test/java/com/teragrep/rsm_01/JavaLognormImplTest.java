@@ -59,29 +59,6 @@ class JavaLognormImplTest {
     }
 
     @Test
-    public void loadSamplesTest() {
-        assertDoesNotThrow(() -> {
-            LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
-            LognormFactory lognormFactory = new LognormFactory(opts);
-            JavaLognormImpl javaLognormImpl = lognormFactory.lognorm();
-            String samplesPath = "src/test/resources/sample.rulebase";
-            javaLognormImpl.liblognormLoadSamples(samplesPath); // Throws exception if fails to load samples
-            javaLognormImpl.close();
-        });
-    }
-
-    @Test
-    public void loadSamplesFromStringTest() {
-        assertDoesNotThrow(() -> {
-            LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
-            LognormFactory lognormFactory = new LognormFactory(opts);
-            JavaLognormImpl javaLognormImpl = lognormFactory.lognorm();
-            javaLognormImpl.liblognormLoadSamplesFromString("rule=:%all:rest%"); // Throws exception if fails to load samples
-            javaLognormImpl.close();
-        });
-    }
-
-    @Test
     public void hasAdvancedStatsTest() {
         boolean i = new JavaLognorm.Smart().liblognormHasAdvancedStats();
         assertFalse(i);
@@ -90,45 +67,40 @@ class JavaLognormImplTest {
     @Test
     public void normalizeTest() {
         assertDoesNotThrow(() -> {
-            LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
-            LognormFactory lognormFactory = new LognormFactory(opts);
-            JavaLognormImpl javaLognormImpl = lognormFactory.lognorm();
             String samplesString = "rule=:%all:rest%";
-
-            javaLognormImpl.liblognormLoadSamplesFromString(samplesString);
-            String s = javaLognormImpl.liblognormNormalize("offline"); // Throws exception if fails.
-            Assertions.assertEquals("{ \"all\": \"offline\" }", s);
-
-            // cleanup
-            javaLognormImpl.close();
+            LognormFactory lognormFactory = new LognormFactory(samplesString);
+            try (JavaLognormImpl javaLognormImpl = lognormFactory.lognorm()) {
+                String s = javaLognormImpl.liblognormNormalize("offline"); // Throws exception if fails.
+                Assertions.assertEquals("{ \"all\": \"offline\" }", s);
+            }
         });
     }
 
     @Test
     public void normalizeExceptionTest() {
         assertDoesNotThrow(() -> {
-            LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
-            LognormFactory lognormFactory = new LognormFactory(opts);
-            JavaLognormImpl javaLognormImpl = lognormFactory.lognorm();
-            String samplesString = "invalidRulebase"; // load rulebase that will cause exception
-
-            javaLognormImpl.liblognormLoadSamplesFromString(samplesString);
-            IllegalArgumentException e = Assertions
-                    .assertThrows(IllegalArgumentException.class, () -> javaLognormImpl.liblognormNormalize("offline"));
-            Assertions
-                    .assertEquals("ln_normalize() failed to perform extraction with error code: -1000", e.getMessage());
-
-            // cleanup
-            javaLognormImpl.close();
+            String samplesString = "rule=tag1:Quantity: %N:number%"; // load rulebase that can cause exception with specific message normalization
+            LognormFactory lognormFactory = new LognormFactory(samplesString);
+            try (JavaLognormImpl javaLognormImpl = lognormFactory.lognorm()) {
+                IllegalArgumentException e = Assertions
+                        .assertThrows(
+                                IllegalArgumentException.class, () -> javaLognormImpl.liblognormNormalize("unparseable")
+                        );
+                Assertions
+                        .assertEquals(
+                                "ln_normalize() failed to perform extraction with error code: -1000", e.getMessage()
+                        );
+            }
         });
     }
 
     @Test
-    public void exitCtxTest() {
-        LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
-        LognormFactory lognormFactory = new LognormFactory(opts);
-        JavaLognormImpl javaLognormImpl = lognormFactory.lognorm();
-        Assertions.assertDoesNotThrow(javaLognormImpl::close); // Throws if ln_exitCtx doesn't return zero.
+    public void closeTest() {
+        assertDoesNotThrow(() -> {
+            LognormFactory lognormFactory = new LognormFactory("rule=:%all:rest%");
+            JavaLognormImpl javaLognormImpl = lognormFactory.lognorm();
+            javaLognormImpl.close(); // Throws if ln_exitCtx doesn't return zero.
+        });
     }
 
 }

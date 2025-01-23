@@ -49,14 +49,36 @@ import com.sun.jna.Pointer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+
 public final class LognormFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LognormFactory.class);
 
     private final LibJavaLognorm.OptionsStruct options;
+    private final String samples;
+    private final boolean fileUsed;
 
-    public LognormFactory(final LibJavaLognorm.OptionsStruct options) {
+    public LognormFactory(final String samples) {
+        this(new LibJavaLognorm.OptionsStruct(), samples, false);
+    }
+
+    public LognormFactory(final LibJavaLognorm.OptionsStruct options, final String samples) {
+        this(options, samples, false);
+    }
+
+    public LognormFactory(final File samplesFile) {
+        this(new LibJavaLognorm.OptionsStruct(), samplesFile.getAbsolutePath(), true);
+    }
+
+    public LognormFactory(final LibJavaLognorm.OptionsStruct options, final File samplesFile) {
+        this(options, samplesFile.getAbsolutePath(), true);
+    }
+
+    public LognormFactory(final LibJavaLognorm.OptionsStruct options, final String samples, final boolean fileUsed) {
         this.options = options;
+        this.samples = samples;
+        this.fileUsed = fileUsed;
     }
 
     public JavaLognormImpl lognorm() {
@@ -75,7 +97,30 @@ public final class LognormFactory {
         }
         // Load options
         LibJavaLognorm.jnaInstance.setCtxOpts(ctx, options);
+        // Load samples
+        if (fileUsed) {
+            liblognormLoadSamples(ctx, samples);
+        }
+        else {
+            liblognormLoadSamplesFromString(ctx, samples);
+        }
         return new JavaLognormImpl(ctx);
+    }
+
+    private void liblognormLoadSamplesFromString(Pointer ctx, String rulebase) {
+        int i = LibJavaLognorm.jnaInstance.loadSamplesFromString(ctx, rulebase);
+        if (i != 0) {
+            LOGGER.error("ln_loadSamplesFromString() returned error code <{}>", i);
+            throw new IllegalArgumentException("ln_loadSamplesFromString() returned " + i + " instead of 0");
+        }
+    }
+
+    private void liblognormLoadSamples(Pointer ctx, String rulebase) {
+        int i = LibJavaLognorm.jnaInstance.loadSamples(ctx, rulebase);
+        if (i != 0) {
+            LOGGER.error("ln_loadSamples() returned error code <{}>", i);
+            throw new IllegalArgumentException("ln_loadSamples() returned " + i + " instead of 0");
+        }
     }
 
     private void liblognormSetDebugCB(Pointer ctx) {

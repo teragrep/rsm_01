@@ -61,9 +61,7 @@ public final class JavaLognormImpl implements JavaLognorm, AutoCloseable {
 
     private void liblognormExitCtx() {
         if (ctx == Pointer.NULL) {
-            throw new IllegalArgumentException(
-                    "LogNorm() not initialized. Use liblognormInitCtx() to initialize the ctx."
-            );
+            throw new IllegalArgumentException("ctx not initialized. Use LogNormFactory to initialize the ctx.");
         }
 
         int i = LibJavaLognorm.jnaInstance.exitCtx(ctx);
@@ -73,35 +71,7 @@ public final class JavaLognormImpl implements JavaLognorm, AutoCloseable {
         }
     }
 
-    public void liblognormLoadSamples(String samples) {
-        if (ctx == Pointer.NULL) {
-            throw new IllegalArgumentException(
-                    "LogNorm() not initialized. Use liblognormInitCtx() to initialize the ctx."
-            );
-        }
-
-        int i = LibJavaLognorm.jnaInstance.loadSamples(ctx, samples);
-        if (i != 0) {
-            LOGGER.error("ln_loadSamples() returned error code <{}>", i);
-            throw new IllegalArgumentException("Load samples returned " + i + " instead of 0");
-        }
-    }
-
-    public void liblognormLoadSamplesFromString(String samples) {
-        if (ctx == Pointer.NULL) {
-            throw new IllegalArgumentException(
-                    "LogNorm() not initialized. Use liblognormInitCtx() to initialize the ctx."
-            );
-        }
-
-        int i = LibJavaLognorm.jnaInstance.loadSamplesFromString(ctx, samples);
-        if (i != 0) {
-            LOGGER.error("ln_loadSamplesFromString() returned error code <{}>", i);
-            throw new IllegalArgumentException("ln_loadSamplesFromString() returned " + i + " instead of 0");
-        }
-    }
-
-    /* If an error is detected by the library, the method returns an error code and generated jref containing further error details in normalized form.
+    /* If an error is detected by the library, the ln_normalize() method returns an error code and generated jref containing further error details in normalized form.
      Otherwise, returns 0 and the message in normalized form.*/
     public String liblognormNormalize(String text) {
         if (ctx != Pointer.NULL) {
@@ -121,17 +91,13 @@ public final class JavaLognormImpl implements JavaLognorm, AutoCloseable {
             return liblognormReadResult(result.jref);
         }
         else {
-            throw new IllegalArgumentException(
-                    "LogNorm() not initialized. Use liblognormInitCtx() to initialize the ctx."
-            );
+            throw new IllegalArgumentException("ctx not initialized. Use LogNormFactory to initialize the ctx.");
         }
     }
 
     private String liblognormReadResult(Pointer jref) {
         if (ctx == Pointer.NULL) {
-            throw new IllegalArgumentException(
-                    "LogNorm() not initialized. Use liblognormInitCtx() to initialize the ctx."
-            );
+            throw new IllegalArgumentException("ctx not initialized. Use LogNormFactory to initialize the ctx.");
         }
 
         String cstring = LibJavaLognorm.jnaInstance.readResult(jref);

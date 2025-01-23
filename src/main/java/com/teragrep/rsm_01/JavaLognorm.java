@@ -47,10 +47,6 @@ package com.teragrep.rsm_01;
 
 public interface JavaLognorm {
 
-    public abstract void liblognormLoadSamples(String samples);
-
-    public abstract void liblognormLoadSamplesFromString(String samples);
-
     public abstract String liblognormNormalize(String text);
 
     public static final class Smart {

@@ -48,6 +48,8 @@ package com.teragrep.rsm_01;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class LognormFactoryTest {
@@ -55,34 +57,88 @@ public class LognormFactoryTest {
     @Test
     public void setCtxOptsTest() {
         assertDoesNotThrow(() -> {
+            String samplesString = "rule=:%all:rest%";
             LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
             opts.CTXOPT_ADD_ORIGINALMSG = true;
-            LognormFactory lognormFactory = new LognormFactory(opts);
-            JavaLognormImpl javaLognormImpl = lognormFactory.lognorm(); // Throws exception if fails to initialize properly
-            // Assert that original message is included in the result to see if opts are working
-            String samplesString = "rule=:%all:rest%";
-            javaLognormImpl.liblognormLoadSamplesFromString(samplesString); // Throws exception if fails to load samples
-            String s = javaLognormImpl.liblognormNormalize("offline");
-            Assertions.assertEquals("{ \"all\": \"offline\", \"originalmsg\": \"offline\" }", s);
-
-            // cleanup
-            javaLognormImpl.close();
+            LognormFactory lognormFactory = new LognormFactory(opts, samplesString);
+            try (JavaLognormImpl javaLognormImpl = lognormFactory.lognorm()) {
+                // Assert that original message is included in the result to see if opts are working
+                String s = javaLognormImpl.liblognormNormalize("offline");
+                // Assert that the originalmsg is added to the result
+                Assertions.assertEquals("{ \"all\": \"offline\", \"originalmsg\": \"offline\" }", s);
+            }
         });
     }
 
     @Test
     public void defaultCtxOptsTest() {
         assertDoesNotThrow(() -> {
-            LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
-            LognormFactory lognormFactory = new LognormFactory(opts);
-            JavaLognormImpl javaLognormImpl = lognormFactory.lognorm(); // Throws exception if fails to initialize properly
-            // Assert that original message is included in the result to see if opts are working
             String samplesString = "rule=:%all:rest%";
-            javaLognormImpl.liblognormLoadSamplesFromString(samplesString); // Throws exception if fails to load samples
-            String s = javaLognormImpl.liblognormNormalize("offline");
-            Assertions.assertEquals("{ \"all\": \"offline\" }", s);
+            LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct(); // All opts disabled by default
+            LognormFactory lognormFactory = new LognormFactory(opts, samplesString);
+            try (JavaLognormImpl javaLognormImpl = lognormFactory.lognorm()) {
+                // Assert that original message is included in the result to see if opts are working
+                String s = javaLognormImpl.liblognormNormalize("offline");
+                // Assert that the originalmsg is not added to the result
+                Assertions.assertEquals("{ \"all\": \"offline\" }", s);
+            }
+        });
+    }
 
-            // cleanup
+    @Test
+    public void loadSamplesTest() {
+        assertDoesNotThrow(() -> {
+            String samplesPath = "src/test/resources/sample.rulebase";
+            File sampleFile = new File(samplesPath);
+            Assertions.assertTrue(sampleFile.exists());
+            LognormFactory lognormFactory = new LognormFactory(sampleFile);
+            JavaLognormImpl javaLognormImpl = lognormFactory.lognorm(); // throws if loading fails
+            javaLognormImpl.close();
+        });
+    }
+
+    @Test
+    public void loadSamplesWithOptsTest() {
+        assertDoesNotThrow(() -> {
+            String samplesPath = "src/test/resources/sample.rulebase";
+            File sampleFile = new File(samplesPath);
+            Assertions.assertTrue(sampleFile.exists());
+            LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
+            LognormFactory lognormFactory = new LognormFactory(opts, sampleFile);
+            JavaLognormImpl javaLognormImpl = lognormFactory.lognorm(); // throws if loading fails
+            javaLognormImpl.close();
+        });
+    }
+
+    @Test
+    public void loadSamplesExceptionTest() {
+        assertDoesNotThrow(() -> {
+            String samplesPath = "src/test/resources/sample.rulebas"; // invalid path
+            File sampleFile = new File(samplesPath);
+            Assertions.assertFalse(sampleFile.exists());
+            LognormFactory lognormFactory = new LognormFactory(sampleFile);
+            IllegalArgumentException e = Assertions
+                    .assertThrows(IllegalArgumentException.class, () -> lognormFactory.lognorm());
+            Assertions.assertEquals("ln_loadSamples() returned 1 instead of 0", e.getMessage());
+        });
+    }
+
+    @Test
+    public void loadSamplesFromStringTest() {
+        assertDoesNotThrow(() -> {
+            LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
+            LognormFactory lognormFactory = new LognormFactory(opts, "rule=:%all:rest%");
+            JavaLognormImpl javaLognormImpl = lognormFactory.lognorm(); // throws if loading fails
+            javaLognormImpl.close();
+        });
+    }
+
+    @Test
+    public void loadSamplesFromStringWithOptsTest() {
+        assertDoesNotThrow(() -> {
+            LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
+            LognormFactory lognormFactory = new LognormFactory(opts, "rule=:%all:rest%");
+            JavaLognormImpl javaLognormImpl = lognormFactory.lognorm(); // throws if loading fails
             javaLognormImpl.close();
         });
     }
