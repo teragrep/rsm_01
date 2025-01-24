@@ -58,6 +58,7 @@ public final class LognormFactory {
     private final LibJavaLognorm.OptionsStruct options;
     private final String samples;
     private final boolean fileUsed;
+    private final ErrorCallbackImpl errorCallbackImpl;
 
     public LognormFactory(final String samples) {
         this(new LibJavaLognorm.OptionsStruct(), samples, false);
@@ -79,6 +80,7 @@ public final class LognormFactory {
         this.options = options;
         this.samples = samples;
         this.fileUsed = fileUsed;
+        this.errorCallbackImpl = new ErrorCallbackImpl();
     }
 
     public JavaLognormImpl lognorm() {
@@ -90,7 +92,7 @@ public final class LognormFactory {
             );
         }
         // Enable error logging for liblognorm ctx. Mandatory for proper exception handling in java.
-        liblognormSetErrMsgCB(ctx);
+        liblognormSetErrMsgCB(ctx, errorCallbackImpl);
         // Enable debug logging
         if (LOGGER.isDebugEnabled()) {
             liblognormSetDebugCB(ctx);
@@ -104,7 +106,7 @@ public final class LognormFactory {
         else {
             liblognormLoadSamplesFromString(ctx, samples);
         }
-        return new JavaLognormImpl(ctx);
+        return new JavaLognormImpl(ctx, errorCallbackImpl);
     }
 
     private void liblognormLoadSamplesFromString(Pointer ctx, String rulebase) {
@@ -113,6 +115,7 @@ public final class LognormFactory {
             LOGGER.error("ln_loadSamplesFromString() returned error code <{}>", i);
             throw new IllegalArgumentException("ln_loadSamplesFromString() returned " + i + " instead of 0");
         }
+        errorCallbackImpl.throwOccurredErrors();
     }
 
     private void liblognormLoadSamples(Pointer ctx, String rulebaseFile) {
@@ -125,6 +128,7 @@ public final class LognormFactory {
         if (LibJavaLognorm.jnaInstance.rulebaseVersion(ctx) != 2) {
             throw new IllegalArgumentException("Loaded rulebase is not using version 2");
         }
+        errorCallbackImpl.throwOccurredErrors();
     }
 
     private void liblognormSetDebugCB(Pointer ctx) {
@@ -136,8 +140,7 @@ public final class LognormFactory {
         }
     }
 
-    private void liblognormSetErrMsgCB(Pointer ctx) {
-        ErrorCallbackImpl callbackImpl = new ErrorCallbackImpl();
+    private void liblognormSetErrMsgCB(Pointer ctx, ErrorCallbackImpl callbackImpl) {
         int i = LibJavaLognorm.jnaInstance.setErrMsgCB(ctx, callbackImpl);
         if (i != 0) {
             LOGGER.error("ln_setErrMsgCB() returned error code <{}>", i);
