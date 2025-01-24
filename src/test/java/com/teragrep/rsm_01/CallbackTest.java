@@ -125,9 +125,11 @@ public class CallbackTest {
         loggerForTarget.addAppender(appender);
         loggerForTarget.setLevel(Level.ERROR);
         try {
-            // invoke error callback via loadSamplesFromString() using invalid sample,
-            JavaLognormImpl javaLognormImpl = lognormFactory.lognorm();
-            // Assert that the expected log messages are seen
+            // invoke error callback via lognormFactory using invalid sample,
+            IllegalArgumentException e = Assertions
+                    .assertThrows(IllegalArgumentException.class, lognormFactory::lognorm);
+            Assertions.assertEquals("<1> liblognorm errors have occurred, see logs for details.", e.getMessage());
+            // Assert that the expected log messages are seen after the exception is thrown
             verify(appender, times(1)).append(logCaptor.capture());
             Arrays.stream(new String[] {
                     expectedLogMessages
@@ -139,7 +141,6 @@ public class CallbackTest {
                                             expectedLogMessage, logCaptor.getValue().getMessage().getFormattedMessage()
                                     )
                     );
-            javaLognormImpl.close();
         }
         finally {
             // Restore logger state in case this affects other tests
