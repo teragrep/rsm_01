@@ -60,7 +60,7 @@ class JavaLognormImplTest {
     @BeforeAll
     public static void log4jconfig() {
         // log4j2 configuration
-        Path log4j2Config = Paths.get("src/test/resources/log4j2.properties");
+        Path log4j2Config = Paths.get("src/test/resources/log4j2Error.properties");
         Configurator.reconfigure(log4j2Config.toUri());
     }
 
