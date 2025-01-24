@@ -588,6 +588,7 @@
             <exclude>src/test/resources/sample2.rulebase</exclude>
             <exclude>src/test/resources/sample3.rulebase</exclude>
             <exclude>src/test/resources/log4j2.properties</exclude>
+            <exclude>src/test/resources/log4j2Error.properties</exclude>
           </excludes>
         </configuration>
         <executions>
