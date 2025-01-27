@@ -1,0 +1,7 @@
+rule=:%{"type":"date-rfc3164", "name":"date"},
+         {"type":"literal", "text:" "},
+         {"type":"char-to", "name":"host", "extradata":":"},
+         {"type":"literal", "text:": no longer listening on "},
+         {"type":"ipv4", "name":"ip"},
+         {"type":"literal", "text:"#"},
+         {"type":"number", "name":"port"}%
