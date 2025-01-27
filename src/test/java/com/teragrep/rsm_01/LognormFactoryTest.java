@@ -231,6 +231,20 @@ public class LognormFactoryTest {
     }
 
     @Test
+    public void loadSamplesFromStringJsonTest() {
+        assertDoesNotThrow(() -> {
+            LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
+            String testingRulebase = "rule=:%{\"type\":\"date-rfc3164\", \"name\":\"date\"}" + "      % %"
+                    + "       {\"type\":\"char-to\", \"name\":\"host\", \"extradata\":\":\"}"
+                    + "      % no longer listening on %" + "        {\"type\":\"ipv4\", \"name\":\"ip\"}" + "      %#%"
+                    + "        {\"type\":\"number\", \"name\":\"port\"}" + "      %";
+            LognormFactory lognormFactory = new LognormFactory(opts, testingRulebase);
+            JavaLognormImpl javaLognormImpl = lognormFactory.lognorm(); // throws if loading fails
+            javaLognormImpl.close();
+        });
+    }
+
+    @Test
     public void loadSamplesFromStringExceptionTest() {
         assertDoesNotThrow(() -> {
             LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
