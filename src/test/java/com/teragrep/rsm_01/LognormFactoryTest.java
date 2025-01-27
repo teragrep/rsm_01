@@ -146,6 +146,18 @@ public class LognormFactoryTest {
     }
 
     @Test
+    public void loadSamplesJsonTest() {
+        assertDoesNotThrow(() -> {
+            String samplesPath = "src/test/resources/jsonLiteral.rulebase";
+            File sampleFile = new File(samplesPath);
+            Assertions.assertTrue(sampleFile.exists());
+            LognormFactory lognormFactory = new LognormFactory(sampleFile);
+            JavaLognormImpl javaLognormImpl = lognormFactory.lognorm(); // throws if loading fails
+            javaLognormImpl.close();
+        });
+    }
+
+    @Test
     public void loadSamplesWithOptsTest() {
         assertDoesNotThrow(() -> {
             String samplesPath = "src/test/resources/sample.rulebase";
@@ -168,6 +180,20 @@ public class LognormFactoryTest {
             IllegalArgumentException e = Assertions
                     .assertThrows(IllegalArgumentException.class, () -> lognormFactory.lognorm());
             Assertions.assertEquals("ln_loadSamples() returned 1 instead of 0", e.getMessage());
+        });
+    }
+
+    @Test
+    public void loadSamplesExceptionTest2() {
+        assertDoesNotThrow(() -> {
+            String samplesPath = "src/test/resources/json.rulebase"; // rulebase in json format
+            File sampleFile = new File(samplesPath);
+            Assertions.assertTrue(sampleFile.exists());
+            LognormFactory lognormFactory = new LognormFactory(sampleFile);
+            // ln_loadSamples() doesn't return an error code but the liblognorm error callback logs an error during rulebase loading triggering an exception.
+            IllegalArgumentException e = Assertions
+                    .assertThrows(IllegalArgumentException.class, () -> lognormFactory.lognorm());
+            Assertions.assertEquals("<1> liblognorm errors have occurred, see logs for details.", e.getMessage());
         });
     }
 
@@ -201,6 +227,30 @@ public class LognormFactoryTest {
             LognormFactory lognormFactory = new LognormFactory(opts, "rule=:%all:rest%");
             JavaLognormImpl javaLognormImpl = lognormFactory.lognorm(); // throws if loading fails
             javaLognormImpl.close();
+        });
+    }
+
+    @Test
+    public void loadSamplesFromStringExceptionTest() {
+        assertDoesNotThrow(() -> {
+            LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
+            LognormFactory lognormFactory = new LognormFactory(opts, "invalidRulebase");
+            // ln_loadSamplesFromString() doesn't return an error code but the liblognorm error callback logs an error during rulebase loading triggering an exception.
+            IllegalArgumentException e = Assertions
+                    .assertThrows(IllegalArgumentException.class, lognormFactory::lognorm);
+            Assertions.assertEquals("<1> liblognorm errors have occurred, see logs for details.", e.getMessage());
+        });
+    }
+
+    @Test
+    public void loadSamplesFromStringExceptionTest2() {
+        assertDoesNotThrow(() -> {
+            LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
+            LognormFactory lognormFactory = new LognormFactory(opts, "invalidRulebase\nmoreInvalidRules");
+            // ln_loadSamplesFromString() doesn't return an error code but the liblognorm error callback logs 2 errors during rulebase loading triggering an exception.
+            IllegalArgumentException e = Assertions
+                    .assertThrows(IllegalArgumentException.class, lognormFactory::lognorm);
+            Assertions.assertEquals("<2> liblognorm errors have occurred, see logs for details.", e.getMessage());
         });
     }
 
