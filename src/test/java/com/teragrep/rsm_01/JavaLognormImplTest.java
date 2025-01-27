@@ -54,13 +54,13 @@ class JavaLognormImplTest {
 
     @Test
     public void versionTest() {
-        String s = new JavaLognorm.Smart().liblognormVersionCheck();
+        String s = new JavaLognorm.LibraryInformation().liblognormVersionCheck();
         Assertions.assertEquals("2.0.6", s);
     }
 
     @Test
     public void hasAdvancedStatsTest() {
-        boolean i = new JavaLognorm.Smart().liblognormHasAdvancedStats();
+        boolean i = new JavaLognorm.LibraryInformation().liblognormHasAdvancedStats();
         assertFalse(i);
     }
 
@@ -70,7 +70,7 @@ class JavaLognormImplTest {
             String samplesString = "rule=:%all:rest%";
             LognormFactory lognormFactory = new LognormFactory(samplesString);
             try (JavaLognormImpl javaLognormImpl = lognormFactory.lognorm()) {
-                String s = javaLognormImpl.liblognormNormalize("offline"); // Throws exception if fails.
+                String s = javaLognormImpl.normalize("offline"); // Throws exception if fails.
                 Assertions.assertEquals("{ \"all\": \"offline\" }", s);
             }
         });
@@ -83,9 +83,7 @@ class JavaLognormImplTest {
             LognormFactory lognormFactory = new LognormFactory(samplesString);
             try (JavaLognormImpl javaLognormImpl = lognormFactory.lognorm()) {
                 IllegalArgumentException e = Assertions
-                        .assertThrows(
-                                IllegalArgumentException.class, () -> javaLognormImpl.liblognormNormalize("unparseable")
-                        );
+                        .assertThrows(IllegalArgumentException.class, () -> javaLognormImpl.normalize("unparseable"));
                 Assertions
                         .assertEquals(
                                 "ln_normalize() failed to perform extraction with error code: -1000", e.getMessage()

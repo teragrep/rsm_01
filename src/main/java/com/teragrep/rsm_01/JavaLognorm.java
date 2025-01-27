@@ -47,9 +47,9 @@ package com.teragrep.rsm_01;
 
 public interface JavaLognorm {
 
-    public abstract String liblognormNormalize(String text);
+    public abstract String normalize(String text);
 
-    public static final class Smart {
+    public static final class LibraryInformation {
 
         public boolean liblognormHasAdvancedStats() {
             return LibJavaLognorm.jnaInstance.hasAdvancedStats();

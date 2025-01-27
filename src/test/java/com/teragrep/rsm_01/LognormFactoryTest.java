@@ -63,7 +63,7 @@ public class LognormFactoryTest {
             LognormFactory lognormFactory = new LognormFactory(opts, samplesString);
             try (JavaLognormImpl javaLognormImpl = lognormFactory.lognorm()) {
                 // Assert that original message is included in the result to see if opts are working
-                String s = javaLognormImpl.liblognormNormalize("offline");
+                String s = javaLognormImpl.normalize("offline");
                 // Assert that the originalmsg is added to the result
                 Assertions.assertEquals("{ \"all\": \"offline\", \"originalmsg\": \"offline\" }", s);
             }
@@ -78,7 +78,7 @@ public class LognormFactoryTest {
             LognormFactory lognormFactory = new LognormFactory(opts, samplesString);
             try (JavaLognormImpl javaLognormImpl = lognormFactory.lognorm()) {
                 // Assert that original message is included in the result to see if opts are working
-                String s = javaLognormImpl.liblognormNormalize("offline");
+                String s = javaLognormImpl.normalize("offline");
                 // Assert that the originalmsg is not added to the result
                 Assertions.assertEquals("{ \"all\": \"offline\" }", s);
             }

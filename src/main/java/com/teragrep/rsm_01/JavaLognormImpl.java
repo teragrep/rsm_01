@@ -73,7 +73,7 @@ public final class JavaLognormImpl implements JavaLognorm, AutoCloseable {
 
     /* If an error is detected by the library, the ln_normalize() method returns an error code and generated jref containing further error details in normalized form.
      Otherwise, returns 0 and the message in normalized form.*/
-    public String liblognormNormalize(String text) {
+    public String normalize(String text) {
         if (ctx != Pointer.NULL) {
             LibJavaLognorm.NormalizedStruct norm = new LibJavaLognorm.NormalizedStruct();
             LibJavaLognorm.NormalizedStruct result = LibJavaLognorm.jnaInstance.normalize(ctx, text, norm);
