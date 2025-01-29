@@ -54,9 +54,11 @@ public final class JavaLognormImpl implements JavaLognorm, AutoCloseable {
     private static final Logger LOGGER = LoggerFactory.getLogger(JavaLognormImpl.class);
 
     private final Pointer ctx;
+    private final ErrorCallbackImpl errorCallbackImpl;
 
-    public JavaLognormImpl(Pointer ctx) {
+    public JavaLognormImpl(Pointer ctx, ErrorCallbackImpl callbackImpl) {
         this.ctx = ctx;
+        this.errorCallbackImpl = callbackImpl;
     }
 
     private void liblognormExitCtx() {
@@ -69,6 +71,7 @@ public final class JavaLognormImpl implements JavaLognorm, AutoCloseable {
             LOGGER.error("ln_exitCtx() returned error code <{}>", i);
             throw new IllegalArgumentException("ln_exitCtx() returned " + i + " instead of 0");
         }
+        errorCallbackImpl.throwOccurredErrors();
     }
 
     /* If an error is detected by the library, the ln_normalize() method returns an error code and generated jref containing further error details in normalized form.
@@ -88,6 +91,7 @@ public final class JavaLognormImpl implements JavaLognorm, AutoCloseable {
                         "ln_normalize() failed to perform extraction with error code: " + result.rv
                 );
             }
+            errorCallbackImpl.throwOccurredErrors();
             return liblognormReadResult(result.jref);
         }
         else {
