@@ -3,33 +3,70 @@
 // 2. Update the issues link in Contributing section in the readme file
 // 3. Update the discussion link in config.yml file in .github/ISSUE_TEMPLATE directory
 
-= repo-template
+= Record Schema Mapping Library for Java
 
-// Add a short description of your project. Tell what your project does and what it's used for.
-
-This is a template repository for Teragrep organization.
+RSM-01 is a library that provides record schema mapping (log normalization) functionality to Java using Liblognorm library that is written in C-code. All the functionalities of the Liblognorm library are provided to Java through the use of Java Native Access (JNA) library.
 
 == Features
 
-// List your project's features
+- Provides full access to log normalization functionalities of Liblognorm C-library in Java, which in short allows:
+. Matching a line to a rule from predefined configuration.
+. Picking out variable fields from the line according to the configuration.
+. Returning the picked variable fields as a JSON string object.
+- Capability to handle errors occurring in the C-library through Java exceptions.
 
-== Documentation
+== How to use
 
-See the official documentation on https://docs.teragrep.com[docs.teragrep.com].
+=== Configuration
 
-== Limitations
+To use RSM-01 for log normalization, 2 things are required:
 
-// If your project has limitations, please list them. Otherwise remove this section.
+. Log messages.
+. A rulebase, which configures how the messages are normalized by liblognorm.
 
-== How to [compile/use/implement]
+The rulebase consists of lines of text where each line reflects the structure of your log messages. When normalization is started, a parse-tree will be generated from the rulebase and then used to parse the log messages. The provided rulebase must follow the version 2 configuration guidelines described in the https://www.liblognorm.com/files/manual/configuration.html[liblognorm documentations].
 
-// add instructions how people can start to use your project
+=== Normalization
+
+Normalization is done by first initializing `LognormFactory` object with the rulebase given as an input argument for the constructor. The `lognorm()` method of the factory object is then used to provide a configured version of `JavaLognormImpl` object that is capable of normalizing messages through the `normalize()` method.
+
+The rulebase can be provided to the `LognormFactory` constructor either as a `String` or as a `File` object. Rulebases in `String` format do not require the `version=2` indicator mentioned in liblognorm documentations.
+
+Because of C memory management requirements, the `JavaLognormImpl` object must be closed when it is no longer needed. The typical use-case for normalization using try-with-resources is as follows:
+
+[,java]
+----
+LognormFactory lognormFactory = new LognormFactory("rule=:%all:rest%");
+try (JavaLognormImpl javaLognormImpl = lognormFactory.lognorm()) {
+    String normalizedMessage = javaLognormImpl.normalize("message to normalize");
+}
+----
+
+If normalization was a success, normalizedMessage will hold the normalization result in JSON string format.
+
+=== Additional configuration options
+
+Liblognorm API has additional configuration options available for normalization:
+
+. *LN_CTXOPT_ADD_ORIGINALMSG* - always adds original message to the normalization result on v2 engine.
+. *LN_CTXOPT_ADD_RULE* - adds mockup rule to the normalization result on v2 engine.
+. *LN_CTXOPT_ADD_RULE_LOCATION* - adds rule location (file, lineno) to the normalization result on v2 engine.
+
+The configuration for the additional options is done by providing `OptionsStruct` object as an additional input argument for `LognormFactory` constructor.
+
+[,java]
+----
+LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
+opts.CTXOPT_ADD_ORIGINALMSG = true;
+LognormFactory lognormFactory = new LognormFactory(opts, "rule=:%all:rest%");
+try (JavaLognormImpl javaLognormImpl = lognormFactory.lognorm()) {
+    String normalizedMessage = javaLognormImpl.normalize("message to normalize");
+}
+----
 
 == Contributing
 
-// Change the repository name in the issues link to match with your project's name
-
-You can involve yourself with our project by https://github.com/teragrep/repo-template/issues/new/choose[opening an issue] or submitting a pull request.
+You can involve yourself with our project by https://github.com/teragrep/rsm_01/issues/new/choose[opening an issue] or submitting a pull request.
 
 Contribution requirements:
 
