@@ -22,5 +22,8 @@ jobs:
           java-version: 8.0.292+10
           distribution: 'adopt'
 
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install liblognorm-dev
+
       - name: Run CI
         run: mvn --batch-mode clean package

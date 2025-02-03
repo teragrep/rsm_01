@@ -45,8 +45,8 @@
  */
 #include <stddef.h>
 #include <string.h>
-#include <liblognorm/liblognorm.h>
-#include <liblognorm/lognorm.h>
+#include <liblognorm.h>
+#include <lognorm.h>
 
 typedef struct OptionsStruct_TAG {
     int CTXOPT_ALLOW_REGEX;
