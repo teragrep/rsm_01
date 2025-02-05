@@ -50,6 +50,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Objects;
 
 public final class LognormFactory {
 
@@ -120,6 +124,27 @@ public final class LognormFactory {
         if (i != 0) {
             LOGGER.error("ln_loadSamples() returned error code <{}>", i);
             throw new IllegalArgumentException("ln_loadSamples() returned " + i + " instead of 0");
+        }
+        // Check for version=2 line from rulebase.
+        checkRulebaseVersion(rulebase);
+    }
+
+    private void checkRulebaseVersion(String rulebase) {
+        BufferedReader reader;
+        try {
+            reader = new BufferedReader(new FileReader(rulebase));
+            String line = reader.readLine();
+            if (Objects.equals(line, "version=2")) {
+                reader.close();
+            }
+            else {
+                reader.close();
+                throw new IllegalArgumentException("Loaded rulebase is not using version 2");
+            }
+        }
+        catch (IOException e) {
+            LOGGER.error("Error reading rulebase file");
+            throw new IllegalArgumentException("Error reading rulebase file: ", e);
         }
     }
 
