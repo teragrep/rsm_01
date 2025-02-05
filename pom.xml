@@ -573,6 +573,7 @@
             <exclude>src/main/c/Makefile.am</exclude>
             <!-- test resources -->
             <exclude>src/test/resources/sample.rulebase</exclude>
+            <exclude>src/test/resources/sampleV1.rulebase</exclude>
             <exclude>src/test/resources/sample2.rulebase</exclude>
             <exclude>src/test/resources/sample3.rulebase</exclude>
           </excludes>
