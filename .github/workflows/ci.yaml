@@ -26,4 +26,4 @@ jobs:
         run: sudo apt-get update && sudo apt-get install liblognorm-dev
 
       - name: Run CI
-        run: mvn --batch-mode clean verify package
+        run: mvn --batch-mode clean verify
