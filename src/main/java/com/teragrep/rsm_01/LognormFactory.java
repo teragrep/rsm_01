@@ -144,7 +144,7 @@ public final class LognormFactory {
         }
         catch (IOException e) {
             LOGGER.error("Error reading rulebase file");
-            throw new IllegalArgumentException("Error reading rulebase file: ", e);
+            throw new IllegalArgumentException("Error reading rulebase file", e);
         }
     }
 
