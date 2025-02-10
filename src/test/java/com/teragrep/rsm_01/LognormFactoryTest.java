@@ -124,6 +124,19 @@ public class LognormFactoryTest {
     }
 
     @Test
+    public void loadSamplesV1ExceptionTest() {
+        assertDoesNotThrow(() -> {
+            String samplesPath = "src/test/resources/sampleV1.rulebase"; // rulebase using V1 format.
+            File sampleFile = new File(samplesPath);
+            Assertions.assertTrue(sampleFile.exists());
+            LognormFactory lognormFactory = new LognormFactory(sampleFile);
+            IllegalArgumentException e = Assertions
+                    .assertThrows(IllegalArgumentException.class, () -> lognormFactory.lognorm());
+            Assertions.assertEquals("Loaded rulebase is not using version 2", e.getMessage());
+        });
+    }
+
+    @Test
     public void loadSamplesFromStringTest() {
         assertDoesNotThrow(() -> {
             LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();

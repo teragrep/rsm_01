@@ -86,15 +86,10 @@ public interface LibJavaLognorm extends Library {
 
     // JNA requires the @FieldOrder annotation so it can properly serialize data into a memory buffer before using it as an argument to the target method.
     @FieldOrder({
-            "CTXOPT_ALLOW_REGEX",
-            "CTXOPT_ADD_EXEC_PATH",
-            "CTXOPT_ADD_ORIGINALMSG",
-            "CTXOPT_ADD_RULE",
-            "CTXOPT_ADD_RULE_LOCATION"
+            "CTXOPT_ADD_EXEC_PATH", "CTXOPT_ADD_ORIGINALMSG", "CTXOPT_ADD_RULE", "CTXOPT_ADD_RULE_LOCATION"
     })
     public static class OptionsStruct extends Structure {
 
-        public boolean CTXOPT_ALLOW_REGEX = false;
         public boolean CTXOPT_ADD_EXEC_PATH = false;
         public boolean CTXOPT_ADD_ORIGINALMSG = false;
         public boolean CTXOPT_ADD_RULE = false;
@@ -145,4 +140,7 @@ public interface LibJavaLognorm extends Library {
 
     // Set a callback for error logging
     public abstract int setErrMsgCB(Pointer ctx, ErrorCallback func);
+
+    // Return rulebase version currently used by the context.
+    public abstract int rulebaseVersion(Pointer ctx);
 }

@@ -115,11 +115,15 @@ public final class LognormFactory {
         }
     }
 
-    private void liblognormLoadSamples(Pointer ctx, String rulebase) {
-        int i = LibJavaLognorm.jnaInstance.loadSamples(ctx, rulebase);
+    private void liblognormLoadSamples(Pointer ctx, String rulebaseFile) {
+        int i = LibJavaLognorm.jnaInstance.loadSamples(ctx, rulebaseFile);
         if (i != 0) {
             LOGGER.error("ln_loadSamples() returned error code <{}>", i);
             throw new IllegalArgumentException("ln_loadSamples() returned " + i + " instead of 0");
+        }
+        // Check rulebase version.
+        if (LibJavaLognorm.jnaInstance.rulebaseVersion(ctx) != 2) {
+            throw new IllegalArgumentException("Loaded rulebase is not using version 2");
         }
     }
 
