@@ -49,7 +49,6 @@
 #include <lognorm.h>
 
 typedef struct OptionsStruct_TAG {
-    int CTXOPT_ALLOW_REGEX;
     int CTXOPT_ADD_EXEC_PATH;
     int CTXOPT_ADD_ORIGINALMSG;
     int CTXOPT_ADD_RULE;
@@ -89,9 +88,6 @@ int exitCtx(ln_ctx *context) {
 
 void setCtxOpts(ln_ctx *ctx, OptionsStruct *opts) {
     unsigned ctxOpts = 0;
-    if (opts->CTXOPT_ALLOW_REGEX != 0) {
-        ctxOpts |= LN_CTXOPT_ALLOW_REGEX;
-        }
     if (opts->CTXOPT_ADD_EXEC_PATH != 0) {
         ctxOpts |= LN_CTXOPT_ADD_EXEC_PATH;
         }
