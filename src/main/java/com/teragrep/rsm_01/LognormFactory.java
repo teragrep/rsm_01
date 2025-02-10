@@ -119,20 +119,20 @@ public final class LognormFactory {
         }
     }
 
-    private void liblognormLoadSamples(Pointer ctx, String rulebase) {
-        int i = LibJavaLognorm.jnaInstance.loadSamples(ctx, rulebase);
+    private void liblognormLoadSamples(Pointer ctx, String rulebaseFile) {
+        // Check for version=2 line from rulebase.
+        checkRulebaseVersion(rulebaseFile);
+        int i = LibJavaLognorm.jnaInstance.loadSamples(ctx, rulebaseFile);
         if (i != 0) {
             LOGGER.error("ln_loadSamples() returned error code <{}>", i);
             throw new IllegalArgumentException("ln_loadSamples() returned " + i + " instead of 0");
         }
-        // Check for version=2 line from rulebase.
-        checkRulebaseVersion(rulebase);
     }
 
-    private void checkRulebaseVersion(String rulebase) {
+    private void checkRulebaseVersion(String rulebaseFile) {
         BufferedReader reader;
         try {
-            reader = new BufferedReader(new FileReader(rulebase));
+            reader = new BufferedReader(new FileReader(rulebaseFile));
             String line = reader.readLine();
             if (Objects.equals(line, "version=2")) {
                 reader.close();
