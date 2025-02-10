@@ -119,7 +119,7 @@ public class LognormFactoryTest {
             LognormFactory lognormFactory = new LognormFactory(sampleFile);
             IllegalArgumentException e = Assertions
                     .assertThrows(IllegalArgumentException.class, () -> lognormFactory.lognorm());
-            Assertions.assertEquals("Error reading rulebase file", e.getMessage());
+            Assertions.assertEquals("ln_loadSamples() returned 1 instead of 0", e.getMessage());
         });
     }
 

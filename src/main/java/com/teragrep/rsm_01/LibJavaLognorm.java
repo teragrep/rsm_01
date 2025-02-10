@@ -140,4 +140,7 @@ public interface LibJavaLognorm extends Library {
 
     // Set a callback for error logging
     public abstract int setErrMsgCB(Pointer ctx, ErrorCallback func);
+
+    // Return rulebase version currently used by the context.
+    public abstract int rulebaseVersion(Pointer ctx);
 }

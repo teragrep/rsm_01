@@ -155,3 +155,8 @@ int setDebugCB(ln_ctx *ctx, const DebugCallback debugCallback) {
 int setErrMsgCB(ln_ctx *ctx, const ErrorCallback errorCallback) {
     return ln_setErrMsgCB(*ctx, errorCallback, NULL);
 }
+
+int rulebaseVersion(ln_ctx *context) {
+    ln_ctx ctx = *context;
+    return ctx->version;
+}
