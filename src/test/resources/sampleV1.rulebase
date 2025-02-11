@@ -1,3 +1,2 @@
-version=2
 rule=:%all:rest%
 rule=tag1:Quantity: %N:number%
