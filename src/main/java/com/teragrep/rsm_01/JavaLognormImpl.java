@@ -59,6 +59,9 @@ public final class JavaLognormImpl implements JavaLognorm, AutoCloseable {
         this.ctx = ctx;
     }
 
+    /**
+     * Discards the library context, freeing the resources associated with the given library context.
+     */
     private void liblognormExitCtx() {
         if (ctx == Pointer.NULL) {
             throw new IllegalArgumentException("ctx not initialized. Use LogNormFactory to initialize the ctx.");
@@ -71,8 +74,7 @@ public final class JavaLognormImpl implements JavaLognorm, AutoCloseable {
         }
     }
 
-    /* If an error is detected by the library, the ln_normalize() method returns an error code and generated jref containing further error details in normalized form.
-     Otherwise, returns 0 and the message in normalized form.*/
+    @Override
     public String normalize(String text) {
         if (ctx != Pointer.NULL) {
             LibJavaLognorm.NormalizedStruct norm = new LibJavaLognorm.NormalizedStruct();
@@ -95,6 +97,12 @@ public final class JavaLognormImpl implements JavaLognorm, AutoCloseable {
         }
     }
 
+    /**
+     * Reads the results of the normalization in C and converts it to a json string.
+     *
+     * @param jref Pointer to a C-language json object.
+     * @return Json string.
+     */
     private String liblognormReadResult(Pointer jref) {
         if (ctx == Pointer.NULL) {
             throw new IllegalArgumentException("ctx not initialized. Use LogNormFactory to initialize the ctx.");
@@ -106,10 +114,20 @@ public final class JavaLognormImpl implements JavaLognorm, AutoCloseable {
         return javaString;
     }
 
+    /**
+     * Releases the results of the normalization from memory in C.
+     *
+     * @param jref Pointer to a C-language json object.
+     */
     private void liblognormDestroyResult(Pointer jref) {
         LibJavaLognorm.jnaInstance.destroyResult(jref);
     }
 
+    /**
+     * Calls liblognormExitCtx() to free the resources in C.
+     *
+     * @throws IllegalArgumentException Throws if closing fails.
+     */
     @Override
     public void close() throws IllegalArgumentException {
         liblognormExitCtx();
