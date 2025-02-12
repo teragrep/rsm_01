@@ -15,6 +15,18 @@ RSM-01 is a library that provides record schema mapping (log normalization) func
 . Returning the picked variable fields as a JSON string object.
 - Capability to handle errors occurring in the C-library through Java exceptions.
 
+== How to compile
+
+=== Building
+
+Tested on Fedora 41
+
+[,bash]
+----
+dnf install liblognorm-devel
+mvn clean package
+----
+
 == How to use
 
 === Configuration
