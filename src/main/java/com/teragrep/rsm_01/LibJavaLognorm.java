@@ -47,42 +47,10 @@ package com.teragrep.rsm_01;
 
 import com.sun.jna.*;
 import com.sun.jna.Structure.FieldOrder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public interface LibJavaLognorm extends Library {
 
     public static final LibJavaLognorm jnaInstance = Native.load("JavaLognorm", LibJavaLognorm.class);
-
-    public static interface DebugCallback extends Callback {
-
-        public abstract void invoke(Pointer cookie, String msg, int length);
-
-        public static class DebugCallbackImpl implements DebugCallback {
-
-            private static final Logger LOGGER = LoggerFactory.getLogger(DebugCallbackImpl.class);
-
-            @Override
-            public void invoke(Pointer cookie, String msg, int length) {
-                LOGGER.debug("liblognorm: {}", msg);
-            }
-        }
-    }
-
-    public static interface ErrorCallback extends Callback {
-
-        public abstract void invoke(Pointer cookie, String msg, int length);
-
-        public static class ErrorCallbackImpl implements ErrorCallback {
-
-            private static final Logger LOGGER = LoggerFactory.getLogger(ErrorCallbackImpl.class);
-
-            @Override
-            public void invoke(Pointer cookie, String msg, int length) {
-                LOGGER.error("liblognorm error: {}", msg);
-            }
-        }
-    }
 
     // JNA requires the @FieldOrder annotation so it can properly serialize data into a memory buffer before using it as an argument to the target method.
     @FieldOrder({
