@@ -25,12 +25,12 @@ mvn clean package
 
 === Configuration
 
-To use RSM-01 for log normalization, 2 things are required:
+To use RSM-01 for log normalization, two things are required:
 
 . Log messages.
 . A rulebase, which configures how the messages are normalized by liblognorm.
 
-The rulebase consists of lines of text where each line reflects the structure of your log messages. Liblognorm will generate a parse-tree from the rulebase and then use it to parse the log messages during normalization. The provided rulebase must follow the version 2 configuration guidelines described in the https://www.liblognorm.com/files/manual/configuration.html[liblognorm documentations].
+The rulebase consists of lines of text where each line reflects the structure of your log messages. Liblognorm will generate a parse-tree from the rulebase and then use it to parse the log messages during normalization. The provided rulebase must follow the version two configuration guidelines described in the https://www.liblognorm.com/files/manual/configuration.html[liblognorm documentations].
 
 === Normalization
 
