@@ -13,8 +13,6 @@ RSM-01 is a library that provides record schema mapping (log normalization) func
 
 == How to compile
 
-=== Building
-
 Tested on Fedora 41
 
 [,bash]
