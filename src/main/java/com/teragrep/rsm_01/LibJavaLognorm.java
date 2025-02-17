@@ -104,42 +104,113 @@ public interface LibJavaLognorm extends Library {
         public Pointer jref;
     }
 
-    // Returns the version of the currently used library.
+    /**
+     * Returns the version of the currently used library.
+     *
+     * @return library version string.
+     */
     public abstract String version();
 
-    // init initializes the liblognorm context. deinit() must be called on the produced context when it is not needed anymore.
+    /**
+     * Initializes the liblognorm context. exitCtx() must be called on the produced context when it is not needed
+     * anymore.
+     *
+     * @return Pointer to the liblognorm context object.
+     */
     public abstract Pointer initCtx();
 
-    // To prevent memory leaks, deinit() must be called on a library context that is no longer needed.
+    /**
+     * Discard a library context, freeing the resources associated with the given library context.
+     *
+     * @param ctx Pointer to the liblognorm context object to discard.
+     * @return 0 on success, something else otherwise.
+     */
     public abstract int exitCtx(Pointer ctx);
 
-    // Set options on ctx.
+    /**
+     * Set options on library context.
+     *
+     * @param ctx  Pointer to the liblognorm context.
+     * @param opts OptionsStruct object holding configuration for the options.
+     */
     public abstract void setCtxOpts(Pointer ctx, OptionsStruct opts);
 
-    // Return 1 if library is build with advanced statistics activated, 0 if not.
+    /**
+     * Return true if liblognorm is build with advanced statistics activated.
+     *
+     * @return true if advanced stats are active, false if not.
+     */
     public abstract boolean hasAdvancedStats();
 
-    // Loads the rulebase from a file to the context.
+    /**
+     * Load a (log) sample file.
+     *
+     * @param ctx      Pointer to the liblognorm context.
+     * @param filename Name of file to be loaded.
+     * @return 0 on success, something else otherwise.
+     */
     public abstract int loadSamples(Pointer ctx, String filename);
 
-    // Loads the rulebase via a string to the context.
+    /**
+     * Load a rulebase via a string.
+     *
+     * @param ctx    Pointer to the liblognorm context.
+     * @param string The string with the actual rulebase.
+     * @return 0 on success, something else otherwise.
+     */
     public abstract int loadSamplesFromString(Pointer ctx, String string);
 
-    // normalize gets the log string that is being normalized as input argument, along with the library context. Returns pointer to a json object.
+    /**
+     * Normalize the given message string using the given liblognorm context. NormalizedStruct object is used to
+     * transfer C-language struct containing the normalization result from C to java. NormalizedStruct contains an
+     * integer that is used as a success/error indicator by the liblognorm library, and a C-language json object that
+     * contains either the successfully normalized message or normalization error information.
+     *
+     * @param ctx  Pointer to the liblognorm context.
+     * @param text The message string to normalize
+     * @param norm NormalizedStruct object that can be used to return an integer and a Pointer from C to java.
+     * @return NormalizedStruct object that contains an integer and a pointer to a json object.
+     */
     public abstract NormalizedStruct normalize(Pointer ctx, String text, NormalizedStruct norm);
 
-    // Reads the results of the normalization.
+    /**
+     * Reads the results of the normalization in C.
+     *
+     * @param jref Pointer to a C-language json object.
+     * @return Json string.
+     */
     public abstract String readResult(Pointer jref);
 
-    // Releases the results of the normalization from memory.
+    /**
+     * Releases the results of the normalization from memory in C.
+     *
+     * @param jref Pointer to a C-language json object.
+     */
     public abstract void destroyResult(Pointer jref);
 
-    // Set a callback for debug logging
+    /**
+     * Set a callback for liblognorm debug logging
+     *
+     * @param ctx  Pointer to the liblognorm context.
+     * @param func DebugCallback object
+     * @return 0 on success, something else otherwise.
+     */
     public abstract int setDebugCB(Pointer ctx, DebugCallback func);
 
-    // Set a callback for error logging
+    /**
+     * Set a callback for liblognorm error logging.
+     *
+     * @param ctx  Pointer to the liblognorm context.
+     * @param func ErrorCallback object
+     * @return 0 on success, something else otherwise.
+     */
     public abstract int setErrMsgCB(Pointer ctx, ErrorCallback func);
 
-    // Return rulebase version currently used by the context.
+    /**
+     * Return rulebase version currently used by the liblognorm context.
+     *
+     * @param ctx Pointer to the liblognorm context.
+     * @return 1 or 2, depending on rulebase version. 0 if no rulebase is present.
+     */
     public abstract int rulebaseVersion(Pointer ctx);
 }
