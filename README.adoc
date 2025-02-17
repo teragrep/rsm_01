@@ -1,5 +1,5 @@
 
-= Teragrep Record Schema Mapping Library for Java
+= Teragrep Record Schema Mapper Library for Java
 
 RSM-01 is a library that provides record schema mapping (log normalization) functionality to Java using Liblognorm library that is written in C-code. All the functionalities of the Liblognorm library are provided to Java through the use of Java Native Access (JNA) library.
 
@@ -18,8 +18,14 @@ Tested on Fedora 41
 [,bash]
 ----
 dnf install liblognorm-devel
+----
+
+[,bash]
+----
 mvn clean package
 ----
+
+Maven and liblognorm-devel must be installed to build the project. https://maven.apache.org/install.html
 
 == How to use
 
@@ -54,9 +60,9 @@ If normalization was a success, normalizedMessage will hold the normalization re
 
 Liblognorm API has additional configuration options available for normalization:
 
-. *LN_CTXOPT_ADD_ORIGINALMSG* - always adds original message to the normalization result.
-. *LN_CTXOPT_ADD_RULE* - adds mockup rule to the normalization result.
-. *LN_CTXOPT_ADD_RULE_LOCATION* - adds rule location (file, lineno) to the normalization result.
+. `LN_CTXOPT_ADD_ORIGINALMSG` - always adds original message to the normalization result.
+. `LN_CTXOPT_ADD_RULE` - adds mockup rule to the normalization result.
+. `LN_CTXOPT_ADD_RULE_LOCATION` - adds rule location (file, lineno) to the normalization result.
 
 The configuration for the additional options is done by providing `OptionsStruct` object as an additional input argument for `LognormFactory` constructor.
 
