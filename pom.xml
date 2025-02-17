@@ -587,9 +587,7 @@
             <exclude>src/test/resources/sample.rulebase</exclude>
             <exclude>src/test/resources/sampleV1.rulebase</exclude>
             <exclude>src/test/resources/json.rulebase</exclude>
-            <exclude>src/test/resources/jsonv1.rulebase</exclude>
             <exclude>src/test/resources/jsonLiteral.rulebase</exclude>
-            <exclude>src/test/resources/jsonv1Literal.rulebase</exclude>
             <exclude>src/test/resources/log4j2.properties</exclude>
             <exclude>src/test/resources/log4j2Error.properties</exclude>
           </excludes>

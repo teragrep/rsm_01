@@ -1,6 +1,0 @@
-rule=:%{"type":"char-to", "name":"host", "extradata":":"}
-      % is no longer listening on %
-        {"type":"ipv4", "name":"ip"}
-      %#%
-        {"type":"number", "name":"port"}
-      %
