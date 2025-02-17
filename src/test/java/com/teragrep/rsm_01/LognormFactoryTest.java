@@ -55,7 +55,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 public class LognormFactoryTest {
 
     @Test
-    public void setCtxOptsTest() {
+    public void setCtxOptsMsgTest() {
         assertDoesNotThrow(() -> {
             String samplesString = "rule=:%all:rest%";
             LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
@@ -64,8 +64,45 @@ public class LognormFactoryTest {
             try (JavaLognormImpl javaLognormImpl = lognormFactory.lognorm()) {
                 // Assert that original message is included in the result to see if opts are working
                 String s = javaLognormImpl.normalize("offline");
-                // Assert that the originalmsg is added to the result
                 Assertions.assertEquals("{ \"all\": \"offline\", \"originalmsg\": \"offline\" }", s);
+            }
+        });
+    }
+
+    @Test
+    public void setCtxOptsRuleTest() {
+        assertDoesNotThrow(() -> {
+            String samplesString = "rule=:%all:rest%";
+            LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
+            opts.CTXOPT_ADD_RULE = true;
+            LognormFactory lognormFactory = new LognormFactory(opts, samplesString);
+            try (JavaLognormImpl javaLognormImpl = lognormFactory.lognorm()) {
+                // Assert that rule mockup is included in the result to see if opts are working
+                String s = javaLognormImpl.normalize("offline");
+                Assertions
+                        .assertEquals(
+                                "{ \"all\": \"offline\", \"metadata\": { \"rule\": { \"mockup\": \"%all:rest%\" } } }",
+                                s
+                        );
+            }
+        });
+    }
+
+    @Test
+    public void setCtxOptsLocationTest() {
+        assertDoesNotThrow(() -> {
+            String samplesString = "rule=:%all:rest%";
+            LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
+            opts.CTXOPT_ADD_RULE_LOCATION = true;
+            LognormFactory lognormFactory = new LognormFactory(opts, samplesString);
+            try (JavaLognormImpl javaLognormImpl = lognormFactory.lognorm()) {
+                // Assert that rule location is included in the result to see if opts are working
+                String s = javaLognormImpl.normalize("offline");
+                Assertions
+                        .assertEquals(
+                                "{ \"all\": \"offline\", \"metadata\": { \"rule\": { \"location\": { \"file\": \"--NO-FILE--\", \"line\": 0 } } } }",
+                                s
+                        );
             }
         });
     }
