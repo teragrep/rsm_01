@@ -1,0 +1,4 @@
+version=2
+rule=:%all:rest%
+invalidRule
+rule=tag1:Quantity: %N:number%

@@ -196,6 +196,19 @@ public class LognormFactoryTest {
     }
 
     @Test
+    public void loadInvalidSamplesExceptionTest() {
+        assertDoesNotThrow(() -> {
+            String samplesPath = "src/test/resources/invalid.rulebase"; // invalid rulebase
+            File sampleFile = new File(samplesPath);
+            Assertions.assertTrue(sampleFile.exists());
+            LognormFactory lognormFactory = new LognormFactory(sampleFile);
+            IllegalArgumentException e = Assertions
+                    .assertThrows(IllegalArgumentException.class, () -> lognormFactory.lognorm());
+            Assertions.assertEquals("<1> liblognorm errors have occurred, see logs for details.", e.getMessage());
+        });
+    }
+
+    @Test
     public void loadSamplesV1ExceptionTest() {
         assertDoesNotThrow(() -> {
             String samplesPath = "src/test/resources/sampleV1.rulebase"; // rulebase using V1 format.
