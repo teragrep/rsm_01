@@ -15,7 +15,7 @@ Rsm_01 is a library that provides record schema mapping (log normalization) func
 
 https://maven.apache.org/install.html[Maven] and liblognorm-devel must be installed to build the project.
 
-Tested on Fedora 41
+Project building tested on Fedora 41
 
 [,bash]
 ----
