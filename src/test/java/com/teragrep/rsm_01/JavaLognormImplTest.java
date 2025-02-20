@@ -1,5 +1,5 @@
 /*
- * Teragrep Record Schema Mapper Library for Java RSM-01
+ * Teragrep Record Schema Mapper Library for Java (rsm_01)
  * Copyright (C) 2021-2024 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify

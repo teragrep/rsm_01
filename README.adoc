@@ -1,7 +1,7 @@
 
 = Teragrep Record Schema Mapper Library for Java
 
-RSM-01 is a library that provides record schema mapping (log normalization) functionality to Java using Liblognorm library that is written in C-code. All the functionalities of the Liblognorm library are provided to Java through the use of Java Native Access (JNA) library.
+Rsm_01 is a library that provides record schema mapping (log normalization) functionality to Java using Liblognorm library that is written in C-code. All the functionalities of the Liblognorm library are provided to Java through the use of Java Native Access (JNA) library.
 
 == Features
 
@@ -12,6 +12,8 @@ RSM-01 is a library that provides record schema mapping (log normalization) func
 - Capability to handle errors occurring in the C-library through Java exceptions.
 
 == How to compile
+
+https://maven.apache.org/install.html[Maven] and liblognorm-devel must be installed to build the project.
 
 Tested on Fedora 41
 
@@ -25,18 +27,24 @@ dnf install liblognorm-devel
 mvn clean package
 ----
 
-Maven and liblognorm-devel must be installed to build the project. https://maven.apache.org/install.html
-
 == How to use
 
 === Configuration
 
-To use RSM-01 for log normalization, two things are required:
+To use rsm_01 for log normalization, two things are required:
 
-. Log messages.
-. A rulebase, which configures how the messages are normalized by liblognorm.
+. Log messages
+. A rulebase, which configures how the messages are normalized by liblognorm
 
 The rulebase consists of lines of text where each line reflects the structure of your log messages. Liblognorm will generate a parse-tree from the rulebase and then use it to parse the log messages during normalization. The provided rulebase must follow the version two configuration guidelines described in the https://www.liblognorm.com/files/manual/configuration.html[liblognorm documentations].
+
+A simple rulebase file with two different rules is structured as follows:
+[,txt]
+----
+version=2
+rule=:%all:rest%
+rule=tag:Amount: %N:number%
+----
 
 === Normalization
 
@@ -54,15 +62,15 @@ try (JavaLognormImpl javaLognormImpl = lognormFactory.lognorm()) {
 }
 ----
 
-If normalization was a success, normalizedMessage will hold the normalization result in JSON string format.
+If normalization was a success, `normalizedMessage` will hold the normalization result in JSON string format.
 
 === Additional configuration options
 
 Liblognorm API has additional configuration options available for normalization:
 
-. `LN_CTXOPT_ADD_ORIGINALMSG` - always adds original message to the normalization result.
-. `LN_CTXOPT_ADD_RULE` - adds mockup rule to the normalization result.
-. `LN_CTXOPT_ADD_RULE_LOCATION` - adds rule location (file, lineno) to the normalization result.
+. `LN_CTXOPT_ADD_ORIGINALMSG` — always adds original message to the normalization result.
+. `LN_CTXOPT_ADD_RULE` — adds mockup rule to the normalization result.
+. `LN_CTXOPT_ADD_RULE_LOCATION` — adds rule location (file, lineno) to the normalization result.
 
 The configuration for the additional options is done by providing `OptionsStruct` object as an additional input argument for `LognormFactory` constructor.
 
