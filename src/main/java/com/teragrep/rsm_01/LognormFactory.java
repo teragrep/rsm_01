@@ -150,7 +150,7 @@ public final class LognormFactory {
      * @param ctx Pointer to the liblognorm context.
      */
     private void liblognormSetDebugCB(Pointer ctx) {
-        LibJavaLognorm.DebugCallback.DebugCallbackImpl callbackImpl = new LibJavaLognorm.DebugCallback.DebugCallbackImpl();
+        DebugCallbackImpl callbackImpl = new DebugCallbackImpl();
         int i = LibJavaLognorm.jnaInstance.setDebugCB(ctx, callbackImpl);
         if (i != 0) {
             LOGGER.error("ln_setDebugCB() returned error code <{}>", i);
@@ -164,7 +164,7 @@ public final class LognormFactory {
      * @param ctx Pointer to the liblognorm context.
      */
     private void liblognormSetErrMsgCB(Pointer ctx) {
-        LibJavaLognorm.ErrorCallback.ErrorCallbackImpl callbackImpl = new LibJavaLognorm.ErrorCallback.ErrorCallbackImpl();
+        ErrorCallbackImpl callbackImpl = new ErrorCallbackImpl();
         int i = LibJavaLognorm.jnaInstance.setErrMsgCB(ctx, callbackImpl);
         if (i != 0) {
             LOGGER.error("ln_setErrMsgCB() returned error code <{}>", i);
