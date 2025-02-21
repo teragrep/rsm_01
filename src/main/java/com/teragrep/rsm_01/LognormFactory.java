@@ -165,7 +165,7 @@ public final class LognormFactory {
     /**
      * Set a callback for liblognorm error message logging.
      *
-     * @param ctx Pointer to the liblognorm context.
+     * @param ctx          Pointer to the liblognorm context.
      * @param callbackImpl Error callback implementation for liblognorm to use.
      */
     private void liblognormSetErrMsgCB(Pointer ctx, ErrorCallbackImpl callbackImpl) {
