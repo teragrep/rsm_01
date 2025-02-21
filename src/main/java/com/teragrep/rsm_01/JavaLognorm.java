@@ -1,5 +1,5 @@
 /*
- * Record Schema Mapping Library for Java RSM-01
+ * Teragrep Record Schema Mapper Library for Java (rsm_01)
  * Copyright (C) 2021-2024 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
@@ -47,14 +47,30 @@ package com.teragrep.rsm_01;
 
 public interface JavaLognorm {
 
+    /**
+     * Normalize a message.
+     *
+     * @param text The message string to normalize
+     * @return normalized message as a JSON string object
+     */
     public abstract String normalize(String text);
 
     public static final class LibraryInformation {
 
+        /**
+         * Return true if liblognorm is build with advanced statistics activated.
+         *
+         * @return true if advanced stats are active, false if not
+         */
         public boolean liblognormHasAdvancedStats() {
             return LibJavaLognorm.jnaInstance.hasAdvancedStats();
         }
 
+        /**
+         * Return liblognorm version string.
+         *
+         * @return library version string
+         */
         public String liblognormVersionCheck() {
             return LibJavaLognorm.jnaInstance.version();
         }

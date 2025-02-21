@@ -6,7 +6,7 @@
   <version>${revision}${sha1}${changelist}</version>
   <packaging>jar</packaging>
   <name>rsm_01</name>
-  <description>Record Schema Mapping Library for Java</description>
+  <description>Teragrep Record Schema Mapper Library for Java</description>
   <url>https://teragrep.com</url>
   <licenses>
     <license>
@@ -542,7 +542,7 @@
                   <owner>Suomen Kanuuna Oy</owner>
                   <start>2024</start>
                 </copyright>
-                <text>Record Schema Mapping Library for Java RSM-01</text>
+                <text>Teragrep Record Schema Mapper Library for Java (rsm_01)</text>
               </all>
               <family>Teragrep</family>
             </license>

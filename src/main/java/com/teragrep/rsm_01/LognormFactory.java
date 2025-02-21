@@ -1,5 +1,5 @@
 /*
- * Record Schema Mapping Library for Java RSM-01
+ * Teragrep Record Schema Mapper Library for Java (rsm_01)
  * Copyright (C) 2021-2024 Suomen Kanuuna Oy
  *
  * This program is free software: you can redistribute it and/or modify
@@ -81,6 +81,11 @@ public final class LognormFactory {
         this.fileUsed = fileUsed;
     }
 
+    /**
+     * Create a configured version of JavaLognormImpl.
+     *
+     * @return Configured version of JavaLognormImpl.
+     */
     public JavaLognormImpl lognorm() {
         final Pointer ctx = LibJavaLognorm.jnaInstance.initCtx();
         // Do java exception handling that can't be done in C.
@@ -107,6 +112,12 @@ public final class LognormFactory {
         return new JavaLognormImpl(ctx);
     }
 
+    /**
+     * Load a rulebase via a string to the library context.
+     *
+     * @param ctx      Pointer to the liblognorm context.
+     * @param rulebase The string with the actual rulebase.
+     */
     private void liblognormLoadSamplesFromString(Pointer ctx, String rulebase) {
         int i = LibJavaLognorm.jnaInstance.loadSamplesFromString(ctx, rulebase);
         if (i != 0) {
@@ -115,6 +126,12 @@ public final class LognormFactory {
         }
     }
 
+    /**
+     * Load a (log) sample file to the library context.
+     *
+     * @param ctx          Pointer to the liblognorm context.
+     * @param rulebaseFile Name of file to be loaded.
+     */
     private void liblognormLoadSamples(Pointer ctx, String rulebaseFile) {
         int i = LibJavaLognorm.jnaInstance.loadSamples(ctx, rulebaseFile);
         if (i != 0) {
@@ -127,6 +144,11 @@ public final class LognormFactory {
         }
     }
 
+    /**
+     * Set a callback for liblognorm debug message logging.
+     *
+     * @param ctx Pointer to the liblognorm context.
+     */
     private void liblognormSetDebugCB(Pointer ctx) {
         LibJavaLognorm.DebugCallback.DebugCallbackImpl callbackImpl = new LibJavaLognorm.DebugCallback.DebugCallbackImpl();
         int i = LibJavaLognorm.jnaInstance.setDebugCB(ctx, callbackImpl);
@@ -136,6 +158,11 @@ public final class LognormFactory {
         }
     }
 
+    /**
+     * Set a callback for liblognorm error message logging.
+     *
+     * @param ctx Pointer to the liblognorm context.
+     */
     private void liblognormSetErrMsgCB(Pointer ctx) {
         LibJavaLognorm.ErrorCallback.ErrorCallbackImpl callbackImpl = new LibJavaLognorm.ErrorCallback.ErrorCallbackImpl();
         int i = LibJavaLognorm.jnaInstance.setErrMsgCB(ctx, callbackImpl);
