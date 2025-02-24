@@ -45,14 +45,25 @@
  */
 package com.teragrep.rsm_01;
 
+import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class LognormFactoryTest {
+
+    @BeforeAll
+    public static void log4jconfig() {
+        // log4j2 configuration
+        Path log4j2Config = Paths.get("src/test/resources/log4j2Error.properties");
+        Configurator.reconfigure(log4j2Config.toUri());
+    }
 
     @Test
     public void setCtxOptsMsgTest() {
@@ -135,6 +146,30 @@ public class LognormFactoryTest {
     }
 
     @Test
+    public void loadSamplesJsonTest() {
+        assertDoesNotThrow(() -> {
+            String samplesPath = "src/test/resources/json.rulebase"; // rulebase in pure json format with v2 engine tag
+            File sampleFile = new File(samplesPath);
+            Assertions.assertTrue(sampleFile.exists());
+            LognormFactory lognormFactory = new LognormFactory(sampleFile);
+            JavaLognormImpl javaLognormImpl = lognormFactory.lognorm(); // throws if loading fails
+            javaLognormImpl.close();
+        });
+    }
+
+    @Test
+    public void loadSamplesJsonLiteralTest() {
+        assertDoesNotThrow(() -> {
+            String samplesPath = "src/test/resources/jsonLiteral.rulebase"; // rulebase in json using literal format with v2 engine tag
+            File sampleFile = new File(samplesPath);
+            Assertions.assertTrue(sampleFile.exists());
+            LognormFactory lognormFactory = new LognormFactory(sampleFile);
+            JavaLognormImpl javaLognormImpl = lognormFactory.lognorm(); // throws if loading fails
+            javaLognormImpl.close();
+        });
+    }
+
+    @Test
     public void loadSamplesWithOptsTest() {
         assertDoesNotThrow(() -> {
             String samplesPath = "src/test/resources/sample.rulebase";
@@ -157,6 +192,19 @@ public class LognormFactoryTest {
             IllegalArgumentException e = Assertions
                     .assertThrows(IllegalArgumentException.class, () -> lognormFactory.lognorm());
             Assertions.assertEquals("ln_loadSamples() returned 1 instead of 0", e.getMessage());
+        });
+    }
+
+    @Test
+    public void loadInvalidSamplesExceptionTest() {
+        assertDoesNotThrow(() -> {
+            String samplesPath = "src/test/resources/invalid.rulebase"; // invalid rulebase
+            File sampleFile = new File(samplesPath);
+            Assertions.assertTrue(sampleFile.exists());
+            LognormFactory lognormFactory = new LognormFactory(sampleFile);
+            IllegalArgumentException e = Assertions
+                    .assertThrows(IllegalArgumentException.class, () -> lognormFactory.lognorm());
+            Assertions.assertEquals("<1> liblognorm errors have occurred, see logs for details.", e.getMessage());
         });
     }
 
@@ -190,6 +238,44 @@ public class LognormFactoryTest {
             LognormFactory lognormFactory = new LognormFactory(opts, "rule=:%all:rest%");
             JavaLognormImpl javaLognormImpl = lognormFactory.lognorm(); // throws if loading fails
             javaLognormImpl.close();
+        });
+    }
+
+    @Test
+    public void loadSamplesFromStringJsonTest() {
+        assertDoesNotThrow(() -> {
+            LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
+            String testingRulebase = "rule=:%{\"type\":\"date-rfc3164\", \"name\":\"date\"}" + "      % %"
+                    + "       {\"type\":\"char-to\", \"name\":\"host\", \"extradata\":\":\"}"
+                    + "      % no longer listening on %" + "        {\"type\":\"ipv4\", \"name\":\"ip\"}" + "      %#%"
+                    + "        {\"type\":\"number\", \"name\":\"port\"}" + "      %";
+            LognormFactory lognormFactory = new LognormFactory(opts, testingRulebase);
+            JavaLognormImpl javaLognormImpl = lognormFactory.lognorm(); // throws if loading fails
+            javaLognormImpl.close();
+        });
+    }
+
+    @Test
+    public void loadSamplesFromStringExceptionTest() {
+        assertDoesNotThrow(() -> {
+            LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
+            LognormFactory lognormFactory = new LognormFactory(opts, "invalidRulebase");
+            // ln_loadSamplesFromString() doesn't return an error code but the liblognorm error callback logs an error during rulebase loading triggering an exception.
+            IllegalArgumentException e = Assertions
+                    .assertThrows(IllegalArgumentException.class, lognormFactory::lognorm);
+            Assertions.assertEquals("<1> liblognorm errors have occurred, see logs for details.", e.getMessage());
+        });
+    }
+
+    @Test
+    public void loadSamplesFromStringMultipleExceptionTest() {
+        assertDoesNotThrow(() -> {
+            LibJavaLognorm.OptionsStruct opts = new LibJavaLognorm.OptionsStruct();
+            LognormFactory lognormFactory = new LognormFactory(opts, "invalidRulebase\nmoreInvalidRules");
+            // ln_loadSamplesFromString() doesn't return an error code but the liblognorm error callback logs 2 errors during rulebase loading triggering an exception.
+            IllegalArgumentException e = Assertions
+                    .assertThrows(IllegalArgumentException.class, lognormFactory::lognorm);
+            Assertions.assertEquals("<2> liblognorm errors have occurred, see logs for details.", e.getMessage());
         });
     }
 

@@ -45,72 +45,69 @@
  */
 package com.teragrep.rsm_01;
 
+import com.sun.jna.Pointer;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
 
-class JavaLognormImplTest {
+public class DebugCallbackImplTest {
 
     @BeforeAll
     public static void log4jconfig() {
         // log4j2 configuration
-        Path log4j2Config = Paths.get("src/test/resources/log4j2Error.properties");
+        Path log4j2Config = Paths.get("src/test/resources/log4j2.properties");
         Configurator.reconfigure(log4j2Config.toUri());
     }
 
     @Test
-    public void versionTest() {
-        String s = new JavaLognorm.LibraryInformation().liblognormVersionCheck();
-        Assertions.assertEquals("2.0.6", s);
-    }
+    public void debugCallbackImplTest() {
+        DebugCallbackImpl callbackImpl = new DebugCallbackImpl();
+        Logger loggerForTarget = (Logger) LogManager.getLogger(DebugCallbackImpl.class);
+        String s = "Something happened";
+        String expectedLogMessages = "liblognorm: <Something happened>";
 
-    @Test
-    public void hasAdvancedStatsTest() {
-        boolean i = new JavaLognorm.LibraryInformation().liblognormHasAdvancedStats();
-        assertFalse(i);
-    }
-
-    @Test
-    public void normalizeTest() {
-        assertDoesNotThrow(() -> {
-            String samplesString = "rule=:%all:rest%";
-            LognormFactory lognormFactory = new LognormFactory(samplesString);
-            try (JavaLognormImpl javaLognormImpl = lognormFactory.lognorm()) {
-                String s = javaLognormImpl.normalize("offline"); // Throws exception if fails.
-                Assertions.assertEquals("{ \"all\": \"offline\" }", s);
+        final Appender appender = mock(Appender.class);
+        when(appender.getName()).thenReturn("Mock appender");
+        when(appender.isStarted()).thenReturn(true);
+        final ArgumentCaptor<LogEvent> logCaptor = ArgumentCaptor.forClass(LogEvent.class);
+        final Level effectiveLevel = loggerForTarget.getLevel(); // Save the initial logger state
+        // Attach our test appender and make sure the messages will be logged
+        loggerForTarget.addAppender(appender);
+        loggerForTarget.setLevel(Level.DEBUG);
+        try {
+            // invoke callback
+            callbackImpl.invoke(Pointer.NULL, s, s.length());
+            // Assert that the expected log messages are seen
+            verify(appender, times(1)).append(logCaptor.capture());
+            Arrays.stream(new String[] {
+                    expectedLogMessages
             }
-        });
+            )
+                    .forEach(
+                            expectedLogMessage -> Assertions
+                                    .assertEquals(
+                                            expectedLogMessage, logCaptor.getValue().getMessage().getFormattedMessage()
+                                    )
+                    );
+        }
+        finally {
+            // Restore logger state in case this affects other tests
+            loggerForTarget.removeAppender(appender);
+            loggerForTarget.setLevel(effectiveLevel);
+        }
     }
-
-    @Test
-    public void normalizeExceptionTest() {
-        assertDoesNotThrow(() -> {
-            String samplesString = "rule=tag1:Quantity: %N:number%"; // load rulebase that can cause exception with specific message normalization
-            LognormFactory lognormFactory = new LognormFactory(samplesString);
-            try (JavaLognormImpl javaLognormImpl = lognormFactory.lognorm()) {
-                IllegalArgumentException e = Assertions
-                        .assertThrows(IllegalArgumentException.class, () -> javaLognormImpl.normalize("unparseable"));
-                Assertions
-                        .assertEquals(
-                                "ln_normalize() failed to perform extraction with error code: -1000", e.getMessage()
-                        );
-            }
-        });
-    }
-
-    @Test
-    public void closeTest() {
-        assertDoesNotThrow(() -> {
-            LognormFactory lognormFactory = new LognormFactory("rule=:%all:rest%");
-            JavaLognormImpl javaLognormImpl = lognormFactory.lognorm();
-            javaLognormImpl.close(); // Throws if ln_exitCtx doesn't return zero.
-        });
-    }
-
 }
