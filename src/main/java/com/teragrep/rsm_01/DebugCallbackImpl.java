@@ -55,6 +55,6 @@ public final class DebugCallbackImpl implements DebugCallback {
 
     @Override
     public void invoke(Pointer cookie, String msg, int length) {
-        LOGGER.debug("liblognorm: {}", msg);
+        LOGGER.debug("liblognorm: <{}>", msg);
     }
 }

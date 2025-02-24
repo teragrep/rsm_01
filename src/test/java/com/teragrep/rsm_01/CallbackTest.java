@@ -72,7 +72,7 @@ public class CallbackTest {
 
         LognormFactory lognormFactory = new LognormFactory("rule=:%all:rest%");
         Logger loggerForTarget = (Logger) LogManager.getLogger(DebugCallbackImpl.class);
-        String expectedLogMessages = "liblognorm: =======================================";
+        String expectedLogMessages = "liblognorm: <=======================================>";
 
         final Appender appender = mock(Appender.class);
         when(appender.getName()).thenReturn("Mock appender");
@@ -114,7 +114,7 @@ public class CallbackTest {
 
         LognormFactory lognormFactory = new LognormFactory("invalidSample");
         Logger loggerForTarget = (Logger) LogManager.getLogger(ErrorCallbackImpl.class);
-        String expectedLogMessages = "liblognorm error: rulebase file --NO-FILE--[0]: invalid record type detected: 'invalidSample'";
+        String expectedLogMessages = "liblognorm error: <rulebase file --NO-FILE--[0]: invalid record type detected: 'invalidSample'>";
 
         final Appender appender = mock(Appender.class);
         when(appender.getName()).thenReturn("Mock appender");

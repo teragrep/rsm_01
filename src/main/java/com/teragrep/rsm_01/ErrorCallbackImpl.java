@@ -64,7 +64,7 @@ public final class ErrorCallbackImpl implements ErrorCallback {
     @Override
     public void invoke(Pointer cookie, String msg, int length) {
         errors.add(msg);
-        LOGGER.error("liblognorm error: {}", msg);
+        LOGGER.error("liblognorm error: <{}>", msg);
     }
 
     /**

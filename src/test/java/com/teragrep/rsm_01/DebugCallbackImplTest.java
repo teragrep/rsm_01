@@ -78,7 +78,7 @@ public class DebugCallbackImplTest {
         DebugCallbackImpl callbackImpl = new DebugCallbackImpl();
         Logger loggerForTarget = (Logger) LogManager.getLogger(DebugCallbackImpl.class);
         String s = "Something happened";
-        String expectedLogMessages = "liblognorm: Something happened";
+        String expectedLogMessages = "liblognorm: <Something happened>";
 
         final Appender appender = mock(Appender.class);
         when(appender.getName()).thenReturn("Mock appender");
@@ -100,7 +100,7 @@ public class DebugCallbackImplTest {
                     .forEach(
                             expectedLogMessage -> Assertions
                                     .assertEquals(
-                                            logCaptor.getValue().getMessage().getFormattedMessage(), expectedLogMessage
+                                            expectedLogMessage, logCaptor.getValue().getMessage().getFormattedMessage()
                                     )
                     );
         }
